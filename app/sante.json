@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "generatedAt": "2026-11-09T09:33:39Z",
+  "hosts": {
+    "www.amazon.fr": {
+      "checked": 22,
+      "ok": 21,
+      "blocked": 0,
+      "failed": 1,
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "state": "partiel"
+    },
+    "lecoindesbarons.com": {
+      "checked": 4,
+      "ok": 4,
+      "blocked": 0,
+      "failed": 0,
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "state": "ok"
+    },
+    "www.ultrajeux.com": {
+      "checked": 8,
+      "ok": 8,
+      "blocked": 0,
+      "failed": 0,
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "state": "ok"
+    },
+    "zawarudo.be": {
+      "checked": 1,
+      "ok": 0,
+      "blocked": 1,
+      "failed": 0,
+      "lastOkAt": null,
+      "state": "bloqué"
+    },
+    "www.variantes.com": {
+      "checked": 2,
+      "ok": 2,
+      "blocked": 0,
+      "failed": 0,
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "state": "ok"
+    }
+  },
+  "run": {
+    "id": "bb0b29",
+    "durationMs": 177473,
+    "checked": 37,
+    "failed": 2,
+    "events": 1
+  },
+  "offers": {
+    "B0H8SZV8L7": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T3CLB1": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8SVJL9F": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T1LY94": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8STQ82Z": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T2SL51": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T7N9NK": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T2SB33": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8SZN9HV": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8SYBZKN": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T2L8BL": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8SRZH3N": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T8M5WW": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8SVLTJ9": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T4N6PP": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T6L1SF": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T3Y1FJ": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T38386": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8TF4B9N": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8SZQMD6": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T65P5Z": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "pokemon-duopack-evoli-30e-anniversaire-en-francais": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-33582": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-33280": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "pokemon-coffret-poster-30e-anniversaire-en-francais": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "pokemon-coffret-amphinobi-ex-30e-anniversaire-en-francais": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "pokemon-tcg-coffret-nymphali-ex-30e-anniversaire": {
+      "failures": 1,
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Accès refusé (HTTP 429)."
+      }
+    },
+    "ultrajeux-33355": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-33356": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-32962": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "61087-pokemon-30-ans-coffret-figurine-mew-0196214145450": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "pokemon-bundle-30e-anniversaire-6-boosters-en-francais": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-33583": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "61086-pokemon-30-ans-coffret-premium-metamorph-0196214147430": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-33584": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "ultrajeux-32960": {
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastOkAt": "2026-11-09T09:33:39Z",
+      "failures": 0
+    },
+    "B0H8T3VGFN": {
+      "failures": 1,
+      "lastTryAt": "2026-11-09T09:33:39Z",
+      "lastError": {
+        "kind": "parse",
+        "message": "Fiche Amazon ambiguë (vendeur tiers, achat impossible à confirmer)."
+      }
+    }
+  }
+}

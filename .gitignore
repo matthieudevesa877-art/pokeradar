@@ -1,0 +1,17 @@
+node_modules/
+__pycache__/
+*.pyc
+*.db
+*.db-shm
+*.db-wal
+*.sqlite*
+*.zip
+.env*
+!.env.example
+analyse_pokeradar.json
+*sauvegarde*.json
+pokeradar_stocks_mobile.json
+
+collector/logs/
+collector/.lock
+*.tmp

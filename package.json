@@ -1,0 +1,17 @@
+{
+  "name": "pokeradar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Carnet de veille Pokémon JCC",
+  "scripts": {
+    "start": "node serve.mjs",
+    "collect": "node collector/collect.mjs",
+    "collect:dry": "node collector/collect.mjs --dry",
+    "collect:watch": "node collector/collect.mjs --watch 15",
+    "add": "node collector/collect.mjs --add",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

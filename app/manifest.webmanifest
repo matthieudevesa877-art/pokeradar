@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "PokéRadar · Carnet de veille JCC",
+  "short_name": "PokéRadar",
+  "description": "Marché, boutiques, tirages et relevés Pokémon JCC.",
+  "lang": "fr",
+  "start_url": "./#accueil",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3fb",
+  "theme_color": "#f6f3fb",
+  "icons": [
+    { "src": "./assets/radar-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./assets/radar-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

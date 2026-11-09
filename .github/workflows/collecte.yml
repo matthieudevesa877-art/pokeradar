@@ -1,0 +1,78 @@
+name: Collecte et publication
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # GitHub peut retarder les passages de quelques minutes
+  workflow_dispatch:          # bouton « Run workflow » dans l'onglet Actions
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Un seul passage à la fois : un nouveau passage attend la fin du précédent au lieu de l'écraser.
+concurrency:
+  group: collecte
+  cancel-in-progress: false
+
+jobs:
+  collecte:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Tests
+        run: npm test
+
+      - name: Reprendre le dernier relevé publié (branche data)
+        run: |
+          if git ls-remote --exit-code --heads origin data >/dev/null 2>&1; then
+            git fetch --depth=1 origin data
+            mkdir -p /tmp/published
+            git --work-tree=/tmp/published checkout FETCH_HEAD -- app/veille.json app/evenements.json app/sante.json
+            node collector/merge-seed.mjs app/veille.json /tmp/published/app/veille.json app/veille.json
+            cp /tmp/published/app/evenements.json /tmp/published/app/sante.json app/
+          fi
+
+      - name: Collecter
+        run: node collector/collect.mjs
+
+      - name: Publier le relevé (une seule révision, pas d'historique qui grossit)
+        run: |
+          git config user.name "pokeradar-bot"
+          git config user.email "pokeradar-bot@users.noreply.github.com"
+          git checkout --orphan data-new
+          git rm -rf --cached . -q
+          git add -f app/veille.json app/evenements.json app/sante.json
+          git commit -q -m "Relevé $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push --force origin data-new:data
+
+      - name: Journal du passage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: journal-${{ github.run_id }}
+          path: collector/logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app
+
+  publication:
+    needs: collecte
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

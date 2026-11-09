@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PokéRadar — liens Pokémon</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:#080f1e;color:#eff6ff}
+main{width:min(1080px,94vw);margin:auto;padding:34px 0 90px}
+h1{font-size:clamp(2rem,6vw,3.2rem);margin:12px 0}h2{margin:28px 0 14px;font-size:1.3rem}
+small,.muted{color:#9cb0ca}p{line-height:1.55}input{font-size:1rem;background:#101d32;
+color:#fff;border:1px solid #34475f;padding:15px;border-radius:13px;width:100%}
+.controls{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0}
+.chip{border:1px solid #33445a;background:#18243a;color:#dbeafe;border-radius:99px;padding:9px 13px;
+cursor:pointer;font-size:.9rem}
+.chip.active{border-color:#55b0fa;background:#163963}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:13px}
+.card{background:#101b2d;border:1px solid #293a50;border-radius:17px;padding:16px;display:flex;
+flex-direction:column;gap:9px;min-height:150px}
+.card header{display:flex;justify-content:space-between;gap:8px;font-weight:700}
+.card .group{font-size:.75rem;color:#91bdf7}
+.card .warn{font-size:.81rem;color:#a8b5c5;line-height:1.4;flex:1}
+.links{display:flex;gap:8px;flex-wrap:wrap}
+a{color:#dbeafe;text-decoration:none}.buy{display:inline-block;background:#1769a5;
+padding:9px 11px;border-radius:9px;font-weight:700;font-size:.87rem}
+a.secondary{background:#233247}.notice{border-left:3px solid #ffcd74;padding:10px 13px;
+background:#2b281e;border-radius:8px;color:#e7d5af}
+</style></head><body><main>
+<p class="muted">🔎 POKÉRADAR • PORTAIL D’ACHAT — UTILISABLE SANS SERVEUR</p>
+<h1>Où trouver tes produits Pokémon ?</h1>
+<p>27 liens de recherche vers les grandes enseignes, boutiques TCG, marchés secondaires et sites de veille. Saisis le produit exact, sa langue ou son EAN.</p>
+<label for="search">Produit / mot-clé / EAN</label><input id="search" type="search" autocomplete="off" aria-label="Produit Pokémon">
+<div id="filters" class="controls" aria-label="Catégories de boutiques"></div>
+<div class="notice">Les liens ne confirment ni prix ni disponibilité. Vérifie toujours la langue, la version, le vendeur, les frais et la possibilité de retrait avant de te déplacer.</div>
+<p id="counter" class="muted"></p><section id="items" class="grid" aria-live="polite"></section>
+<p class="muted">Source : liens vers des sites externes. Projet indépendant, non affilié à Pokémon ou aux commerçants. Aucun achat automatique.</p>
+</main><script>
+const sources = [{"id": "amazon", "name": "Amazon.fr", "group": "Grandes enseignes", "site": "https://www.amazon.fr", "domain": "amazon.fr", "strategy": "amazon", "local": false, "warning": "Attention aux vendeurs tiers, à la langue et aux produits reconditionnés."}, {"id": "fnac", "name": "Fnac", "group": "Grandes enseignes", "site": "https://www.fnac.com", "domain": "fnac.com", "strategy": "fnac", "local": true, "warning": "Vérifier « vendu par Fnac » et le retrait en magasin."}, {"id": "cultura", "name": "Cultura", "group": "Grandes enseignes", "site": "https://www.cultura.com", "domain": "cultura.com", "strategy": "google", "local": true, "warning": "Distinguer stock Cultura, marketplace et stock du magasin."}, {"id": "micromania", "name": "Micromania", "group": "Grandes enseignes", "site": "https://www.micromania.fr", "domain": "micromania.fr", "strategy": "google", "local": true, "warning": ""}, {"id": "kingjouet", "name": "King Jouet", "group": "Jouets & loisirs", "site": "https://www.king-jouet.com", "domain": "king-jouet.com", "strategy": "google", "local": true, "warning": "Contrôler le stock du magasin sélectionné."}, {"id": "joueclub", "name": "JouéClub", "group": "Jouets & loisirs", "site": "https://www.joueclub.fr", "domain": "joueclub.fr", "strategy": "google", "local": true, "warning": ""}, {"id": "smyths", "name": "Smyths Toys", "group": "Jouets & loisirs", "site": "https://www.smythstoys.com/fr/fr-fr", "domain": "smythstoys.com", "strategy": "google", "local": true, "warning": "La disponibilité web ne confirme pas le magasin choisi."}, {"id": "granderecre", "name": "La Grande Récré", "group": "Jouets & loisirs", "site": "https://www.lagranderecre.fr", "domain": "lagranderecre.fr", "strategy": "google", "local": true, "warning": ""}, {"id": "leclerc", "name": "E.Leclerc", "group": "Hypermarchés", "site": "https://www.e.leclerc", "domain": "e.leclerc", "strategy": "google", "local": true, "warning": ""}, {"id": "carrefour", "name": "Carrefour", "group": "Hypermarchés", "site": "https://www.carrefour.fr", "domain": "carrefour.fr", "strategy": "google", "local": true, "warning": ""}, {"id": "auchan", "name": "Auchan", "group": "Hypermarchés", "site": "https://www.auchan.fr", "domain": "auchan.fr", "strategy": "google", "local": true, "warning": ""}, {"id": "monoprix", "name": "Monoprix", "group": "Hypermarchés", "site": "https://www.monoprix.fr", "domain": "monoprix.fr", "strategy": "google", "local": true, "warning": ""}, {"id": "intermarche", "name": "Intermarché", "group": "Hypermarchés", "site": "https://www.intermarche.com", "domain": "intermarche.com", "strategy": "google", "local": true, "warning": ""}, {"id": "cdiscount", "name": "Cdiscount", "group": "Grandes enseignes", "site": "https://www.cdiscount.com", "domain": "cdiscount.com", "strategy": "google", "local": false, "warning": "Vérifier l’identité du vendeur marketplace."}, {"id": "playin", "name": "Playin", "group": "Boutiques TCG", "site": "https://www.play-in.com", "domain": "play-in.com", "strategy": "google", "local": true, "warning": ""}, {"id": "parkage", "name": "Parkage", "group": "Boutiques TCG", "site": "https://www.parkage.com", "domain": "parkage.com", "strategy": "google", "local": true, "warning": ""}, {"id": "ultrajeux", "name": "UltraJeux", "group": "Boutiques TCG", "site": "https://www.ultrajeux.com", "domain": "ultrajeux.com", "strategy": "google", "local": true, "warning": ""}, {"id": "cardmarket", "name": "Cardmarket", "group": "Marchés secondaires", "site": "https://www.cardmarket.com/fr/Pokemon", "domain": "cardmarket.com", "strategy": "cardmarket", "local": false, "warning": "Contrôler langue, édition, frais de port et réputation du vendeur."}, {"id": "ebay", "name": "eBay", "group": "Marchés secondaires", "site": "https://www.ebay.fr", "domain": "ebay.fr", "strategy": "ebay", "local": false, "warning": "Une annonce active n’est pas une vente réalisée."}, {"id": "vinted", "name": "Vinted", "group": "Marchés secondaires", "site": "https://www.vinted.fr", "domain": "vinted.fr", "strategy": "vinted", "local": false, "warning": "Attention aux contrefaçons et scellés reconditionnés."}, {"id": "leboncoin", "name": "Leboncoin", "group": "Marchés secondaires", "site": "https://www.leboncoin.fr", "domain": "leboncoin.fr", "strategy": "leboncoin", "local": true, "warning": "Rendez-vous et achat à sécuriser ; demander une preuve du scellé."}, {"id": "rakuten", "name": "Rakuten", "group": "Marchés secondaires", "site": "https://fr.shopping.rakuten.com", "domain": "rakuten.com", "strategy": "google", "local": false, "warning": "Vérifier les vendeurs tiers et les frais."}, {"id": "stockx", "name": "StockX", "group": "Marchés secondaires", "site": "https://stockx.com", "domain": "stockx.com", "strategy": "google", "local": false, "warning": "Comparer le total frais inclus et la langue du produit."}, {"id": "tcgtrackers", "name": "TCG Trackers", "group": "Veille & comparateurs", "site": "https://tcg-trackers.com/stock", "domain": "tcg-trackers.com", "strategy": "category", "local": false, "warning": "Signal externe à confirmer sur la boutique."}, {"id": "cardaround", "name": "CardAround (enseignes)", "group": "Veille & comparateurs", "site": "https://cardaround.fr/enseignes", "domain": "cardaround.fr", "strategy": "category", "local": true, "warning": "Annuaire ; aucune disponibilité confirmée pour un article."}, {"id": "dealabs", "name": "Dealabs", "group": "Veille & comparateurs", "site": "https://www.dealabs.com", "domain": "dealabs.com", "strategy": "google", "local": false, "warning": "Bon plan partagé ; vérifier date, vendeur et stock."}, {"id": "pokemon", "name": "Pokémon officiel", "group": "Sorties officielles", "site": "https://www.pokemon.com/fr", "domain": "pokemon.com", "strategy": "google", "local": false, "warning": "Annonces et informations, pas un magasin."}];
+const input = document.getElementById('search'), filters = document.getElementById('filters');
+const items = document.getElementById('items'), counter = document.getElementById('counter');
+let active = 'Toutes';
+input.value = "Pokémon JCC Règne Delta FR";
+function link(s, q) {
+  const enc = encodeURIComponent(q);
+  if(s.strategy==='amazon')return 'https://www.amazon.fr/s?k='+enc;
+  if(s.strategy==='fnac')return 'https://www.fnac.com/SearchResult/ResultList.aspx?Search='+enc;
+  if(s.strategy==='ebay')return 'https://www.ebay.fr/sch/i.html?_nkw='+enc;
+  if(s.strategy==='cardmarket')return 'https://www.cardmarket.com/fr/Pokemon/Products/Search?searchString='+enc;
+  if(s.strategy==='vinted')return 'https://www.vinted.fr/catalog?search_text='+enc;
+  if(s.strategy==='leboncoin')return 'https://www.leboncoin.fr/recherche?text='+enc;
+  if(s.strategy==='category')return s.site;
+  return 'https://www.google.com/search?q='+encodeURIComponent('site:'+s.domain+' '+q);
+}
+function el(tag, cls, txt) {const x=document.createElement(tag);if(cls)x.className=cls;
+  if(txt!==undefined)x.textContent=txt;return x;}
+function anchor(label,href,secondary=false){const a=el('a',secondary?'buy secondary':'buy',label);
+  a.href=href;a.rel='noopener noreferrer';a.target='_blank';return a;}
+function render(){
+  const q=input.value.trim().slice(0,160);items.replaceChildren();
+  const list=sources.filter(s=>active==='Toutes'||s.group===active);
+  counter.textContent=list.length+' sources • '+(q?'Liens prêts pour « '+q+' »':'Saisis une recherche');
+  for(const s of list){const card=el('article','card'),header=el('header');
+    header.append(el('span','',s.name),el('span','group',s.group));card.append(header);
+    card.append(el('div','warn',s.warning||'Confirmer prix, stock, vendeur et livraison.'));
+    const links=el('div','links');if(q)links.append(anchor('Chercher →',link(s,q)));
+    links.append(anchor('Site',s.site,true));
+    if(s.local)links.append(anchor('Près de moi','https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.name+' près de Suresnes'),true));
+    card.append(links);items.append(card);
+  }
+}
+for(const group of ['Toutes',...new Set(sources.map(s=>s.group))]){
+  const b=el('button','chip'+(group===active?' active':''),group);b.type='button';
+  b.addEventListener('click',()=>{active=group;for(const child of filters.children)child.classList.toggle('active',child.textContent===group);render()});filters.append(b);
+}
+input.addEventListener('input',render);render();
+</script></body></html>
