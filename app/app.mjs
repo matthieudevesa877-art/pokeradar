@@ -99,7 +99,10 @@ function link(label, href, { variant = 'secondary', symbol } = {}) {
 }
 
 function out(label, href, variant = 'secondary') {
-  return link(label, href, { variant, symbol: 'external' });
+  const node = link(label, href, { variant, symbol: 'external' });
+  node.target = '_blank'; // ouvre un nouvel onglet : l'appli reste en place derrière
+  node.rel = 'noopener noreferrer';
+  return node;
 }
 
 function button(label, action, { variant = 'secondary', symbol, disabled = false } = {}) {
