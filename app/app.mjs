@@ -343,13 +343,12 @@ function collectorPanel() {
   if (!hosts.length && !events.length) {
     return el('p', 'mini muted', 'Collecteur automatique : aucun passage enregistré pour l’instant.');
   }
-  const run = collectorHealth?.run;
   const stateClass = { ok: 'mint', partiel: 'gold', bloqué: 'gold', 'en panne': 'gold' };
   return el('div', 'collector',
     el('h3', '', 'Santé du collecteur'),
     el('p', 'mini muted', collectorHealth?.generatedAt ?
       'Dernier passage le ' + fullDate.format(new Date(collectorHealth.generatedAt)) +
-      (run ? ` · ${run.checked} fiche(s), ${run.failed} en échec` : '') : 'Date du dernier passage inconnue.'),
+      (collectorHealth.source ? ' · publié par ' + (collectorHealth.source === 'github' ? 'GitHub' : 'ton PC') : '') : 'Date du dernier passage inconnue.'),
     el('div', 'chips', ...hosts.map(([host, entry]) => badge(
       host.replace(/^www\./, '') + ' · ' + entry.state + (entry.lastOkAt ? ' · ' + fullDate.format(new Date(entry.lastOkAt)) : ''),
       stateClass[entry.state] ?? 'lavender'))),

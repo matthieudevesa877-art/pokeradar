@@ -1,5 +1,5 @@
 const PREFIX = 'pokeradar-shell-';
-const CACHE = PREFIX + 'v9';
+const CACHE = PREFIX + 'v10';
 const SHELL = [
   './', './index.html', './achats-30-ans.html', './styles.css', './app.mjs', './catalog.mjs', './domain.mjs',
   './storage.mjs', './watch.mjs', './manifest.webmanifest', './assets/radar.svg', './assets/field.svg',
