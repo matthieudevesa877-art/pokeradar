@@ -8,7 +8,9 @@
     "collect": "node collector/collect.mjs",
     "collect:dry": "node collector/collect.mjs --dry",
     "collect:watch": "node collector/collect.mjs --watch 15",
-    "add": "node collector/collect.mjs --add",
+    "sync": "node collector/sync.mjs",
+    "sync:watch": "node collector/sync.mjs --watch 15",
+    "add":"node collector/collect.mjs --add",
     "test": "node --test"
   },
   "engines": {

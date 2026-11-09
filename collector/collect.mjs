@@ -13,9 +13,11 @@ import { reconcile, summarize } from './engine.mjs';
 import { decodeWatch } from '../app/watch.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const FEED = join(ROOT, 'app', 'veille.json');
-const EVENTS = join(ROOT, 'app', 'evenements.json');
-const HEALTH = join(ROOT, 'app', 'sante.json');
+// Dossier des relevés : app/ par défaut ; la synchro (sync.mjs) le place dans collector/data pour ne pas salir le dépôt.
+const DATA = process.env.POKERADAR_DATA_DIR ? join(ROOT, process.env.POKERADAR_DATA_DIR) : join(ROOT, 'app');
+const FEED = join(DATA, 'veille.json');
+const EVENTS = join(DATA, 'evenements.json');
+const HEALTH = join(DATA, 'sante.json');
 const LOGS = join(ROOT, 'collector', 'logs');
 const LOCK = join(ROOT, 'collector', '.lock');
 const LOG_DAYS = 30;
@@ -169,7 +171,7 @@ async function runOnce() {
   }
   for (const id of result.suspect) await log({ type: 'suspect', id, message: 'Rupture massive : relevé conservé.' });
 
-  const summary = summarize(feed.offers, outcomes, result.health);
+  const summary = summarize(result.offers, result.health);
   const failedTotal = [...outcomes.values()].filter(o => !o.ok).length;
   if (!flag('--dry')) {
     if (result.changed) await writeJsonAtomic(FEED, { ...feed, offers: result.offers });

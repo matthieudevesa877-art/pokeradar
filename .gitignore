@@ -15,3 +15,4 @@ pokeradar_stocks_mobile.json
 collector/logs/
 collector/.lock
 *.tmp
+collector/data/

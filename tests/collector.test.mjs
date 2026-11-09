@@ -5,7 +5,7 @@ import {
 } from '../collector/adapters.mjs';
 import { eventFor, reconcile, summarize } from '../collector/engine.mjs';
 import { decodeWatch } from '../app/watch.mjs';
-import { mergeSeed } from '../collector/merge-seed.mjs';
+import { mergeEvents, mergeHealth, mergeLatest, mergeSeed } from '../collector/merge-seed.mjs';
 
 const ld = data => `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
 const product = (availability, price = '25.99', extra = {}) => ld({
@@ -135,11 +135,39 @@ test('fusion graine/relevé : observations publiées conservées, fiches ajouté
   assert.equal(merged.offers[1].status, 'unknown');
 });
 
-test('santé : états par site', () => {
-  const rows = [offer('a', 'available'), offer('b', 'available', { url: 'https://other.example/b' }), offer('c', 'available', { url: 'https://third.example/c' })];
-  const outcomes = new Map([['a', ok('available')], ['b', ko('blocked')]]);
-  const { hosts } = summarize(rows, outcomes, {}, NOW);
+test('santé : état par site calculé depuis les fiches (frais = lu il y a moins d’une heure)', () => {
+  const rows = [offer('a', 'available'), offer('b', 'available', { url: 'https://other.example/b' }), offer('c', 'available', { url: 'https://third.example/c' }), offer('d', 'available', { url: 'https://third.example/d' })];
+  const fresh = new Date(NOW - 10 * 60000).toISOString();
+  const health = {
+    a: { lastOkAt: fresh, failures: 0 },
+    b: { lastOkAt: new Date(NOW - 5 * 3600000).toISOString(), lastError: { kind: 'blocked' }, failures: 3 },
+    c: { lastOkAt: fresh }
+  };
+  const { hosts } = summarize(rows, health, NOW);
   assert.equal(hosts['shop.example'].state, 'ok');
   assert.equal(hosts['other.example'].state, 'bloqué');
-  assert.equal(hosts['third.example'].state, 'non contrôlé');
+  assert.equal(hosts['third.example'].state, 'partiel');
+  assert.equal(summarize([offer('z', 'unknown')], {}, NOW).hosts['shop.example'].state, 'non contrôlé');
+});
+
+test('fusion de deux collecteurs : observation la plus récente, événements sans doublon, santé cohérente', () => {
+  const older = offer('a', 'unavailable', { observedAt: '2026-11-09T08:00:00Z' });
+  const newer = offer('a', 'available', { observedAt: '2026-11-09T09:00:00Z' });
+  assert.equal(mergeLatest({ offers: [older] }, { offers: [newer] }).offers[0].status, 'available');
+  assert.equal(mergeLatest({ offers: [newer] }, { offers: [older] }).offers[0].status, 'available');
+  assert.equal(mergeLatest({ offers: [older] }, { offers: [] }).offers[0], older);
+  const event = { at: '2026-11-09T09:00:00Z', id: 'a', type: 'restock' };
+  assert.equal(mergeEvents([event], [event, { at: '2026-11-09T10:00:00Z', id: 'b', type: 'price' }]).length, 2);
+  assert.equal(mergeEvents([event], [event])[0], event);
+  // GitHub a échoué (bloqué) après que le PC a réussi : le succès du PC reste visible, l'échec ne l'efface pas
+  const merged = mergeHealth(
+    { a: { lastTryAt: '2026-11-09T09:30:00Z', lastOkAt: '2026-11-09T09:00:00Z', failures: 1, lastError: { kind: 'blocked' } } },
+    { a: { lastTryAt: '2026-11-09T09:10:00Z', lastOkAt: '2026-11-09T09:10:00Z', failures: 0 } });
+  assert.equal(merged.a.lastOkAt, '2026-11-09T09:10:00Z');
+  assert.equal(merged.a.failures, 1);
+  assert.equal(merged.a.lastError.kind, 'blocked');
+  // un succès plus récent que l'échec remet les compteurs à zéro
+  const healed = mergeHealth({ a: { lastTryAt: '2026-11-09T09:00:00Z', failures: 2, lastError: { kind: 'blocked' } } }, { a: { lastTryAt: '2026-11-09T09:20:00Z', lastOkAt: '2026-11-09T09:20:00Z', failures: 0 } });
+  assert.equal(healed.a.failures, 0);
+  assert.equal(healed.a.lastError, undefined);
 });

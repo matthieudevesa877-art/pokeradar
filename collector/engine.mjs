@@ -87,24 +87,25 @@ export function reconcile({ offers, outcomes, health = {}, events = [], now = Da
   };
 }
 
-export function summarize(offers, outcomes, health, now = Date.now()) {
+export const FRESH_MS = 60 * 60 * 1000; // une fiche lue il y a moins d'une heure compte comme « à jour »
+
+// État par site, calculé uniquement à partir des fiches et de leur santé : il reste donc correct
+// quand plusieurs collecteurs (GitHub, PC) publient dans le même relevé.
+export function summarize(offers, health, now = Date.now()) {
   const hosts = {};
   for (const row of offers) {
     const host = new URL(row.url).hostname;
-    const entry = hosts[host] ?? { checked: 0, ok: 0, blocked: 0, failed: 0, lastOkAt: null };
-    const outcome = outcomes.get(row.id);
-    if (outcome) {
-      entry.checked += 1;
-      if (outcome.ok) entry.ok += 1;
-      else if (outcome.error.kind === 'blocked') entry.blocked += 1;
-      else entry.failed += 1;
-    }
-    const lastOk = health[row.id]?.lastOkAt;
-    if (lastOk && (!entry.lastOkAt || lastOk > entry.lastOkAt)) entry.lastOkAt = lastOk;
+    const entry = hosts[host] ?? { offers: 0, fresh: 0, lastOkAt: null, blocked: 0 };
+    const h = health[row.id] ?? {};
+    entry.offers += 1;
+    if (h.lastOkAt && now - Date.parse(h.lastOkAt) < FRESH_MS) entry.fresh += 1;
+    if (h.lastOkAt && (!entry.lastOkAt || h.lastOkAt > entry.lastOkAt)) entry.lastOkAt = h.lastOkAt;
+    if (h.lastError?.kind === 'blocked') entry.blocked += 1;
     hosts[host] = entry;
   }
   for (const entry of Object.values(hosts)) {
-    entry.state = entry.checked === 0 ? 'non contrôlé' : entry.ok === entry.checked ? 'ok' : entry.ok === 0 ? (entry.blocked ? 'bloqué' : 'en panne') : 'partiel';
+    entry.state = entry.fresh === entry.offers ? 'ok' : entry.fresh > 0 ? 'partiel' : entry.blocked ? 'bloqué' : entry.lastOkAt ? 'en panne' : 'non contrôlé';
+    delete entry.blocked;
   }
   return { version: 1, generatedAt: iso(now), hosts };
 }

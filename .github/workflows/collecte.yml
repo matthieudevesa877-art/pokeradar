@@ -30,28 +30,16 @@ jobs:
       - name: Tests
         run: npm test
 
-      - name: Reprendre le dernier relevé publié (branche data)
-        run: |
-          if git ls-remote --exit-code --heads origin data >/dev/null 2>&1; then
-            git fetch --depth=1 origin data
-            mkdir -p /tmp/published
-            git --work-tree=/tmp/published checkout FETCH_HEAD -- app/veille.json app/evenements.json app/sante.json
-            node collector/merge-seed.mjs app/veille.json /tmp/published/app/veille.json app/veille.json
-            cp /tmp/published/app/evenements.json /tmp/published/app/sante.json app/
-          fi
+      - name: Collecter, fusionner avec le relevé du PC, publier (branche data)
+        env:
+          GIT_AUTHOR_NAME: pokeradar-bot
+          GIT_AUTHOR_EMAIL: pokeradar-bot@users.noreply.github.com
+          GIT_COMMITTER_NAME: pokeradar-bot
+          GIT_COMMITTER_EMAIL: pokeradar-bot@users.noreply.github.com
+        run: node collector/sync.mjs
 
-      - name: Collecter
-        run: node collector/collect.mjs
-
-      - name: Publier le relevé (une seule révision, pas d'historique qui grossit)
-        run: |
-          git config user.name "pokeradar-bot"
-          git config user.email "pokeradar-bot@users.noreply.github.com"
-          git checkout --orphan data-new
-          git rm -rf --cached . -q
-          git add -f app/veille.json app/evenements.json app/sante.json
-          git commit -q -m "Relevé $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push --force origin data-new:data
+      - name: Mettre le relevé fusionné dans l'appli
+        run: cp collector/data/veille.json collector/data/evenements.json collector/data/sante.json app/
 
       - name: Journal du passage
         if: always()
