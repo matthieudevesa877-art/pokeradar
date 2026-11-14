@@ -1,0 +1,389 @@
+{
+  "version": 1,
+  "offers": [
+    {
+      "id": "B0H8SZV8L7",
+      "product": "UPC Noctali · Soirée",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZV8L7?m=A1X6FK5RDHNB96",
+      "price": 229.99,
+      "status": "unavailable",
+      "observedAt": "2026-11-12T12:40:36Z"
+    },
+    {
+      "id": "B0H8T3CLB1",
+      "product": "UPC Mentali · Journée",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3CLB1?m=A1X6FK5RDHNB96",
+      "price": 229.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SVJL9F",
+      "product": "ETB · Coffret Dresseur d’élite",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SVJL9F?m=A1X6FK5RDHNB96",
+      "price": 55.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T1LY94",
+      "product": "Bundle · 6 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T1LY94?m=A1X6FK5RDHNB96",
+      "price": 35.94,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8STQ82Z",
+      "product": "Collection Premium Métamorph · 8 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8STQ82Z?m=A1X6FK5RDHNB96",
+      "price": 54.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T2SL51",
+      "product": "Collection figurine Mew",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T2SL51?m=A1X6FK5RDHNB96",
+      "price": 39.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T7N9NK",
+      "product": "Collection figurine Mewtwo",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T7N9NK?m=A1X6FK5RDHNB96",
+      "price": 39.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T2SB33",
+      "product": "Coffret Amphinobi-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T2SB33?m=A1X6FK5RDHNB96",
+      "price": 25.9,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SZN9HV",
+      "product": "Coffret Nymphali-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZN9HV?m=A1X6FK5RDHNB96",
+      "price": 26.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SYBZKN",
+      "product": "Pokébox Nymphali-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SYBZKN?m=A1X6FK5RDHNB96",
+      "price": 26.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T2L8BL",
+      "product": "Collection Poster",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T2L8BL?m=A1X6FK5RDHNB96",
+      "price": 25.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SRZH3N",
+      "product": "Collection classeur",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SRZH3N?m=A1X6FK5RDHNB96",
+      "price": 49.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T8M5WW",
+      "product": "Blister Évoli · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T8M5WW?m=A1X6FK5RDHNB96",
+      "price": 12.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SVLTJ9",
+      "product": "Tripack autocollant Lucario",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SVLTJ9?m=A1X6FK5RDHNB96",
+      "price": 20.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T4N6PP",
+      "product": "Tripack autocollant Noadkoko d’Alola",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T4N6PP?m=A1X6FK5RDHNB96",
+      "price": 20.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T6L1SF",
+      "product": "Mini-boîte Mentali · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T6L1SF?m=A1X6FK5RDHNB96",
+      "price": 15.02,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T3Y1FJ",
+      "product": "Mini-boîte Amphinobi · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3Y1FJ?m=A1X6FK5RDHNB96",
+      "price": 15.76,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T38386",
+      "product": "Lot Journée · 5 mini-boîtes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T38386?m=A1X6FK5RDHNB96",
+      "price": 74.95,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8TF4B9N",
+      "product": "Lot Soirée · 5 mini-boîtes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8TF4B9N?m=A1X6FK5RDHNB96",
+      "price": 74.95,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SZQMD6",
+      "product": "Deck Combat Mentali-ex · 60 cartes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZQMD6?m=A1X6FK5RDHNB96",
+      "price": 24.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T65P5Z",
+      "product": "Deck Combat Noctali-ex · 60 cartes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T65P5Z?m=A1X6FK5RDHNB96",
+      "price": 24.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "pokemon-duopack-evoli-30e-anniversaire-en-francais",
+      "product": "Duopack Évoli",
+      "seller": "Le Coin des Barons",
+      "url": "https://lecoindesbarons.com/tradingcard-game/cartes-pokemon/booster-pokemon/pokemon-duopack-evoli-30e-anniversaire-en-francais/",
+      "price": 25.99,
+      "status": "available",
+      "observedAt": "2026-11-09T09:50:48Z",
+      "pickup": []
+    },
+    {
+      "id": "ultrajeux-33582",
+      "product": "Deck Noctali",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33582-30e-anniversaire-deck-combat-noctali-ex-0196214147287.html",
+      "price": 49.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Oberkampf",
+        "Rennes-Raspail"
+      ]
+    },
+    {
+      "id": "ultrajeux-33280",
+      "product": "Mini-boîte Amphinobi",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33280-30e-anniversaire-amphinobi-version-nuit-0196214146297.html",
+      "price": 39.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": []
+    },
+    {
+      "id": "pokemon-coffret-poster-30e-anniversaire-en-francais",
+      "product": "Collection Poster",
+      "seller": "Le Coin des Barons",
+      "url": "https://lecoindesbarons.com/tradingcard-game/cartes-pokemon/coffrets-pokemon/pokemon-coffret-poster-30e-anniversaire-en-francais/",
+      "price": 44.99,
+      "status": "available",
+      "observedAt": "2026-11-09T09:50:48Z",
+      "pickup": []
+    },
+    {
+      "id": "pokemon-coffret-amphinobi-ex-30e-anniversaire-en-francais",
+      "product": "Coffret Amphinobi-ex",
+      "seller": "Le Coin des Barons",
+      "url": "https://lecoindesbarons.com/tradingcard-game/cartes-pokemon/coffrets-pokemon/pokemon-coffret-amphinobi-ex-30e-anniversaire-en-francais/",
+      "price": 49.99,
+      "status": "available",
+      "observedAt": "2026-11-09T09:50:48Z",
+      "pickup": []
+    },
+    {
+      "id": "pokemon-tcg-coffret-nymphali-ex-30e-anniversaire",
+      "product": "Coffret Nymphali-ex",
+      "seller": "Za Warudo",
+      "url": "https://zawarudo.be/products/pokemon-tcg-coffret-nymphali-ex-30e-anniversaire",
+      "price": 52.99,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [],
+      "details": "Vendeur belge · livraison France proposée"
+    },
+    {
+      "id": "ultrajeux-33355",
+      "product": "Pokébox Nymphali-ex",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33355-30e-anniversaire-nymphali-ex-0196214146907.html",
+      "price": 59.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Bastille",
+        "Oberkampf",
+        "Rennes-Raspail"
+      ]
+    },
+    {
+      "id": "ultrajeux-33356",
+      "product": "Pokébox Amphinobi-ex",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33356-30e-anniversaire-amphinobi-ex-0196214146907.html",
+      "price": 59.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Bastille",
+        "Oberkampf",
+        "Rennes-Raspail"
+      ]
+    },
+    {
+      "id": "ultrajeux-32962",
+      "product": "Collection Poster",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-32962-30e-anniversaire-sulfura-artikodin-electhor-0196214147225.html",
+      "price": 69.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Bastille",
+        "Oberkampf"
+      ]
+    },
+    {
+      "id": "61087-pokemon-30-ans-coffret-figurine-mew-0196214145450",
+      "product": "Figurine Mew",
+      "seller": "Variantes",
+      "url": "https://www.variantes.com/jcc-tcg-jeux-cartes-a-collectionner/61087-pokemon-30-ans-coffret-figurine-mew-0196214145450.html",
+      "price": 74.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Paris 6ᵉ"
+      ],
+      "details": "Retrait uniquement"
+    },
+    {
+      "id": "pokemon-bundle-30e-anniversaire-6-boosters-en-francais",
+      "product": "Bundle 6 boosters",
+      "seller": "Le Coin des Barons",
+      "url": "https://lecoindesbarons.com/tradingcard-game/cartes-pokemon/bundle-pokemon/pokemon-bundle-30e-anniversaire-6-boosters-en-francais/",
+      "price": 74.99,
+      "status": "available",
+      "observedAt": "2026-11-09T09:50:48Z",
+      "pickup": []
+    },
+    {
+      "id": "ultrajeux-33583",
+      "product": "Figurine Mew",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33583-coffret-5-boosters-pokemon-30e-anniversaire-collection-avec-figurine-mew-0196214145450.html",
+      "price": 84.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Bastille",
+        "Oberkampf",
+        "Rennes-Raspail"
+      ]
+    },
+    {
+      "id": "61086-pokemon-30-ans-coffret-premium-metamorph-0196214147430",
+      "product": "Métamorph",
+      "seller": "Variantes",
+      "url": "https://www.variantes.com/jcc-tcg-jeux-cartes-a-collectionner/61086-pokemon-30-ans-coffret-premium-metamorph-0196214147430.html",
+      "price": 89.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Paris 6ᵉ"
+      ],
+      "details": "Retrait uniquement"
+    },
+    {
+      "id": "ultrajeux-33584",
+      "product": "Métamorph",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33584-coffret-8-boosters-pokemon-30e-anniversaire-collection-premium-metamorph-0196214147430.html",
+      "price": 99.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Bastille",
+        "Oberkampf",
+        "Rennes-Raspail"
+      ]
+    },
+    {
+      "id": "ultrajeux-32960",
+      "product": "ETB 30 ans",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-32960-30e-anniversaire-0196214144835.html",
+      "price": 229.9,
+      "status": "available",
+      "observedAt": "2026-11-14T15:46:43Z",
+      "pickup": [
+        "Bastille",
+        "Oberkampf",
+        "Rennes-Raspail"
+      ]
+    },
+    {
+      "id": "B0H8T3VGFN",
+      "product": "Pokébox Amphinobi-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3VGFN?m=A1X6FK5RDHNB96",
+      "price": null,
+      "status": "unknown",
+      "observedAt": "2026-11-07",
+      "details": "Autres vendeurs lors du dernier relevé."
+    }
+  ],
+  "campaigns": [],
+  "releases": []
+}

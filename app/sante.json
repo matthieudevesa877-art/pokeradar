@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "generatedAt": "2026-11-14T15:46:44Z",
+  "hosts": {
+    "www.amazon.fr": {
+      "offers": 22,
+      "fresh": 0,
+      "lastOkAt": "2026-11-12T12:40:36Z",
+      "state": "bloqué"
+    },
+    "lecoindesbarons.com": {
+      "offers": 4,
+      "fresh": 0,
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "state": "bloqué"
+    },
+    "www.ultrajeux.com": {
+      "offers": 8,
+      "fresh": 8,
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "state": "ok"
+    },
+    "zawarudo.be": {
+      "offers": 1,
+      "fresh": 1,
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "state": "ok"
+    },
+    "www.variantes.com": {
+      "offers": 2,
+      "fresh": 2,
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "state": "ok"
+    }
+  },
+  "run": {
+    "id": "60617b",
+    "durationMs": 19438,
+    "checked": 37,
+    "failed": 26,
+    "events": 0
+  },
+  "source": "github",
+  "offers": {
+    "B0H8SZV8L7": {
+      "failures": 8,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-12T12:40:36Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Amazon demande une vérification anti-robot."
+      }
+    },
+    "B0H8T3CLB1": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Amazon demande une vérification anti-robot."
+      }
+    },
+    "B0H8SVJL9F": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T1LY94": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8STQ82Z": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T2SL51": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T7N9NK": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T2SB33": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8SZN9HV": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8SYBZKN": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T2L8BL": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8SRZH3N": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T8M5WW": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8SVLTJ9": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T4N6PP": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T6L1SF": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T3Y1FJ": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T38386": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8TF4B9N": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8SZQMD6": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "B0H8T65P5Z": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "pokemon-duopack-evoli-30e-anniversaire-en-francais": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Accès refusé (HTTP 403)."
+      }
+    },
+    "ultrajeux-33582": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "ultrajeux-33280": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "pokemon-coffret-poster-30e-anniversaire-en-francais": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Accès refusé (HTTP 403)."
+      }
+    },
+    "pokemon-coffret-amphinobi-ex-30e-anniversaire-en-francais": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "pokemon-tcg-coffret-nymphali-ex-30e-anniversaire": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "ultrajeux-33355": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "ultrajeux-33356": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "ultrajeux-32962": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "61087-pokemon-30-ans-coffret-figurine-mew-0196214145450": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "pokemon-bundle-30e-anniversaire-6-boosters-en-francais": {
+      "failures": 22,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-09T09:50:48Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    },
+    "ultrajeux-33583": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "61086-pokemon-30-ans-coffret-premium-metamorph-0196214147430": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "ultrajeux-33584": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "ultrajeux-32960": {
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastOkAt": "2026-11-14T15:46:43Z",
+      "failures": 0
+    },
+    "B0H8T3VGFN": {
+      "failures": 25,
+      "lastTryAt": "2026-11-14T15:46:43Z",
+      "lastError": {
+        "kind": "blocked",
+        "message": "Site en pause après deux refus consécutifs."
+      }
+    }
+  }
+}
