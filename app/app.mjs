@@ -667,6 +667,7 @@ for (const [key, [label, , symbol]] of Object.entries(ROUTES)) {
   const item = el('a', 'nav-link', icon(symbol), el('span', '', label));
   item.href = '#' + key;
   item.dataset.route = key;
+  item.setAttribute('aria-label', label);
   navigation.append(item);
 }
 
