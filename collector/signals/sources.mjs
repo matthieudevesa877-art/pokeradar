@@ -94,7 +94,8 @@ export function parseLeclercSearch(html) {
   }).filter(Boolean);
 }
 
-const QUERIES = ['pokemon 30e anniversaire', 'pokemon 30 ans coffret', 'pokemon regne delta'];
+// Recherches ciblées sur le catalogue (catalog.mjs) : 6 par enseigne et par passage.
+const QUERIES = ['pokemon 30e anniversaire', 'pokemon regne delta', 'pokemon coffret dresseur elite', 'pokemon collection ultra premium', 'pokemon metamorph', 'pokemon mewtwo'];
 
 export const SOURCES = [
   { name: 'Dealabs', url: 'https://www.dealabs.com/rss/groupe/pokemon', parse: parseDealabs },

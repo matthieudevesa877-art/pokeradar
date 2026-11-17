@@ -9,7 +9,9 @@ import { randomBytes } from 'node:crypto';
 import { SOURCES } from './sources.mjs';
 import { classify, isImportant, isPublicPrice, placeOf } from './classify.mjs';
 import { patterns } from './patterns.mjs';
-import { buildMarket, withResale } from './market.mjs';
+import { analyze, buildMarket } from './market.mjs';
+import { buildGrid, catalogMatch, CATALOG } from './catalog.mjs';
+const CATALOG_INFO = CATALOG.map(({ id, set, name, price, approx }) => ({ id, set, name, price, approx: Boolean(approx) }));
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DATA = process.env.POKERADAR_DATA_DIR ? join(ROOT, process.env.POKERADAR_DATA_DIR) : join(ROOT, 'app');
@@ -53,15 +55,23 @@ export function signalsFromEvents(events) {
     const info = classify(`${event.seller} ${event.product} ${event.type === 'pickup' ? 'retrait ' + event.to : ''}`);
     return {
       id: `radar:${event.at}:${event.id}:${event.type}`, at: event.at, source: 'PokéRadar', title, text: '', url: event.url,
-      price: event.price ?? null, ...info, retailer: info.retailer || event.seller, tcg: true
+      price: event.price ?? null, ...info, retailer: info.retailer || event.seller, tcg: true, big: info.big
     };
+  });
+}
+
+// Analyse de prix + importance, appliquées à chaque fusion (le catalogue et le marché peuvent avoir changé).
+export function finalize(signals, market) {
+  return signals.map(item => {
+    const analyzed = analyze(item, market);
+    return { ...analyzed, important: isImportant(analyzed) };
   });
 }
 
 // Une offre d'enseigne est intéressante si c'est une cible (30 ans, Règne Delta), du JCC, en stock et au prix public.
 export function offerIsGood(offer) {
-  const info = classify(offer.name);
-  return offer.available && info.tcg && (info.targets.includes('30 ans') || info.targets.includes('Règne Delta')) && isPublicPrice(offer.name, offer.price) === true;
+  const product = catalogMatch(offer.name);
+  return Boolean(offer.available && product && Number.isFinite(offer.price) && offer.price <= product.cap);
 }
 
 // Transforme les offres vues en signaux : un signal par « apparition » (absente depuis plus de 3 h puis revue).
@@ -89,8 +99,7 @@ export function mergeSignals(previous = [], incoming = [], now = Date.now()) {
   const byId = new Map(previous.map(item => [item.id, item]));
   for (const item of incoming) byId.set(item.id, { ...byId.get(item.id), ...item });
   // Le lieu est recalculé à chaque fusion : une correction de la liste des communes s'applique aussi aux anciens signaux.
-  const sorted = [...byId.values()].map(item => ({ ...item, ...placeOf(`${item.title}
-${item.text ?? ''}`) })).map(item => ({ ...item, important: isImportant(item) }))
+  const sorted = [...byId.values()].map(item => ({ ...item, ...placeOf(item.title + '\n' + (item.text ?? '')) }))
     .filter(item => now - Date.parse(item.at) < KEEP_DAYS * 86400000)
     .sort((a, b) => b.at.localeCompare(a.at));
   // Même annonce répétée (variantes d'une même fiche, republications) : on n'en garde qu'une par tranche de 12 h.
@@ -123,7 +132,9 @@ export function mergeSignalFiles(local, remote) {
   for (const [key, value] of Object.entries(local.market ?? {})) {
     if (!market[key] || value.updated > market[key].updated) market[key] = value;
   }
-  return { ...newer, signals: signals.map(item => withResale(item, market)), watch, sources, market, patterns: patterns(signals), notified: [...new Set([...(remote.notified ?? []), ...(local.notified ?? [])])].slice(-800) };
+  const grid = String(local.generatedAt) >= String(remote.generatedAt) ? local.grid : remote.grid;
+  const finalSignals = finalize(signals, market);
+  return { ...newer, signals: finalSignals, grid, catalog: CATALOG_INFO, watch, sources, market, patterns: patterns(finalSignals.filter(item => item.big)), notified: [...new Set([...(remote.notified ?? []), ...(local.notified ?? [])])].slice(-800) };
 }
 
 export function alertText(signal) {
@@ -190,18 +201,22 @@ export async function runSignals({ alert = true } = {}) {
   incoming.push(...signalsFromEvents((await readJson(EVENTS, { events: [] })).events ?? []));
 
   const known = new Set((previous?.signals ?? []).map(item => item.id));
-  const market = buildMarket([...offersSeen.values()], previous?.market);
-  const signals = mergeSignals(previous?.signals, incoming).map(item => withResale(item, market));
-  const available = availableNow.map(item => withResale({ ...item, important: isImportant(item) }, market));
+  const allOffers = [...offersSeen.values()];
+  const market = buildMarket(allOffers, previous?.market);
+  // Sources des enseignes en échec : on garde la grille précédente plutôt que d'afficher « pas vu ».
+  const retailOk = Object.entries(health).filter(([name]) => /^(Auchan|Leclerc)/.test(name)).every(([, value]) => value.state === 'ok');
+  const grid = retailOk || !previous?.grid ? buildGrid(allOffers) : previous.grid;
+  const signals = finalize(mergeSignals(previous?.signals, incoming), market);
+  const available = finalize(availableNow, market);
   const fresh = signals.filter(item => !known.has(item.id));
   const notified = new Set(previous?.notified ?? []);
-  const toAlert = firstRun ? [] : fresh.filter(item => isImportant(item) && !notified.has(item.id) && Date.now() - Date.parse(item.at) < ALERT_WINDOW_MS);
+  const toAlert = firstRun ? [] : fresh.filter(item => item.important && !notified.has(item.id) && Date.now() - Date.parse(item.at) < ALERT_WINDOW_MS);
   let sent = 0;
   if (alert && toAlert.length) {
     try { sent = await notify(toAlert); toAlert.forEach(item => notified.add(item.id)); } catch (error) { say(`Alerte non envoyée : ${error.message}`); await log({ source: 'ntfy', state: 'erreur', lastError: error.message }); }
   }
   const output = {
-    version: 1, generatedAt: stamp(), sources: health, patterns: patterns(signals), available, watch, market,
+    version: 1, generatedAt: stamp(), sources: health, patterns: patterns(signals.filter(item => item.big)), available, watch, market, grid, catalog: CATALOG_INFO,
     signals, notified: [...notified].slice(-800)
   };
   await mkdir(DATA, { recursive: true });

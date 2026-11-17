@@ -142,7 +142,9 @@ export function isPublicPrice(title, price) {
 // Un signal mérite une alerte : du JCC, une cible (30 ans, Règne Delta) ou l'Île-de-France en magasin,
 // et jamais une offre de revente au-dessus du prix public.
 export function isImportant(signal) {
-  if (!signal.tcg || signal.publicPrice === false) return false;
+  if (!signal.tcg || signal.publicPrice === false || signal.preorder) return false;
+  if (signal.catalogId?.startsWith('upc-') && signal.verdict === 'prix boutique') return true;
+  if (!signal.big) return false;
   const target = signal.targets.includes('30 ans') || signal.targets.includes('Règne Delta');
   if (signal.kind === 'magasin') return signal.zone === 'IDF' || target;
   // En ligne : seulement les produits qui valent le déplacement ou la revente (ETB, UPC, coffrets, displays, bundles…).

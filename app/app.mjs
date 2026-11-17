@@ -77,8 +77,8 @@ let watchRenderPending = false;
 let collectorHealth = null;
 let collectorEvents = null;
 let signalsFeed = null;
-let signalFilter = 'Importants';
-const SIGNAL_FILTERS = ['Importants', 'Magasins IDF', '30 ans', 'Règne Delta', 'Prix public', 'Tout JCC'];
+let signalFilter = 'Bonnes affaires';
+const SIGNAL_FILTERS = ['Bonnes affaires', 'Magasins IDF', '30 ans', 'Règne Delta', 'Tout'];
 
 function el(tag, classes, ...children) {
   const node = document.createElement(tag);
@@ -405,13 +405,15 @@ function ago(iso) {
   return 'il y a ' + Math.round(minutes / 1440) + ' j';
 }
 
+// Par défaut : grandes enseignes uniquement, pas de précommande, jamais au-dessus du prix boutique.
 function signalMatches(item, filter) {
   if (!item.tcg) return false;
-  if (filter === 'Importants') return item.important;
-  if (filter === 'Magasins IDF') return item.kind === 'magasin' && item.zone === 'IDF';
-  if (filter === '30 ans' || filter === 'Règne Delta') return item.targets.includes(filter);
-  if (filter === 'Prix public') return item.publicPrice === true;
-  return true;
+  if (filter === 'Tout') return true;
+  const useful = item.big && !item.preorder && item.verdict !== 'revente';
+  if (filter === 'Bonnes affaires') return Boolean(item.deal);
+  if (filter === 'Magasins IDF') return useful && item.kind === 'magasin' && item.zone === 'IDF';
+  if (filter === '30 ans' || filter === 'Règne Delta') return useful && item.targets.includes(filter);
+  return useful;
 }
 
 function signalCard(item) {
@@ -425,10 +427,15 @@ function signalCard(item) {
     el('h3', '', item.title),
     where ? el('p', 'muted', where) : null,
     el('div', 'chips',
-      ...item.targets.map(target => badge(target, target === '30 ans' ? 'gold' : 'mint')),
-      item.publicPrice === true ? badge('Prix public', 'mint') : item.publicPrice === false ? badge('Prix revente', 'neutral') : null),
+      item.verdict === 'prix boutique' ? badge('Prix boutique', 'mint') : item.verdict === 'revente' ? badge('Prix revendeur', 'neutral') :
+        item.verdict === 'à vérifier' ? badge('Prix à vérifier', 'gold') : null,
+      item.preorder ? badge('Précommande', 'neutral') : null,
+      !item.big ? badge('Boutique spécialisée', 'neutral') : null,
+      ...item.targets.map(target => badge(target, target === '30 ans' ? 'gold' : 'lavender'))),
+    item.refPrice ? el('p', 'mini muted', 'Prix boutique de référence ' + (item.refApprox ? '≈ ' : '') + euro.format(item.refPrice) +
+      (Number.isFinite(item.price) ? ' · ici ' + euro.format(item.price) : '')) : null,
     Number.isFinite(item.resale) ? el('p', 'mini resale', 'Revente observée ~' + euro.format(item.resale) +
-      (Number.isFinite(item.margin) && item.margin > 0 ? ' · marge estimée +' + euro.format(item.margin) : '') +
+      (Number.isFinite(item.margin) && item.margin > 0 ? ' · marge estimée +' + euro.format(item.margin) + (item.verdict === 'à vérifier' ? ' si au prix boutique' : '') : '') +
       ' (' + item.resaleN + ' offre' + (item.resaleN > 1 ? 's' : '') + ' de revendeurs)') : null,
     el('p', 'mini muted', 'Source : ' + item.source + ' · ' + fullDate.format(new Date(item.at))),
     el('div', 'actions', out('Voir', item.link || item.url), storeSearch ? out('Magasins & téléphone', storeSearch, 'quiet') : null));
@@ -485,6 +492,22 @@ function trendsPanel(patterns) {
     shops.length ? el('div', 'trend-list', ...shops.map(trendRow)) : null);
 }
 
+// Produits classés par marge estimée (revente observée – prix boutique) : quoi demander en priorité en magasin.
+function huntList(feed) {
+  const rows = (feed.catalog ?? []).map(product => ({ product, market: feed.market?.[product.id] }))
+    .filter(row => row.market && row.market.median > row.product.price)
+    .map(row => ({ ...row, margin: Math.round((row.market.median - row.product.price) * 100) / 100 }))
+    .sort((a, b) => b.margin - a.margin).slice(0, 6);
+  if (!rows.length) return null;
+  return el('section', 'section',
+    sectionTitle('Quoi chercher en priorité', link('Vérifier en un tap', '#boutiques', { variant: 'quiet', symbol: 'arrow' })),
+    el('p', 'mini muted', 'Marge estimée par pièce si tu l’achètes au prix boutique, d’après les prix des revendeurs vus sur Auchan et Leclerc. Frais de vente non déduits.'),
+    el('div', 'hunt-list', ...rows.map(({ product, market, margin }) => el('div', 'hunt',
+      el('div', '', el('strong', '', product.name), el('p', 'mini muted', 'Boutique ' + (product.approx ? '≈ ' : '') + euro.format(product.price) +
+        ' · revente ~' + euro.format(market.median) + ' (' + market.n + ' offre' + (market.n > 1 ? 's' : '') + ')')),
+      el('strong', 'hunt-margin', '+' + euro.format(margin))))));
+}
+
 function radarSections() {
   const feed = signalsFeed;
   if (!feed) return [el('section', 'section', empty('radar', 'Radar en cours de chargement', 'Les signaux arrivent avec la prochaine actualisation.'))];
@@ -495,16 +518,18 @@ function radarSections() {
   const paint = () => {
     const rows = feed.signals.filter(item => signalMatches(item, signalFilter)).slice(0, 40);
     results.replaceChildren(...(rows.length ? rows.map(signalCard) : [empty('search', 'Aucun signal pour ce filtre',
-      signalFilter === 'Magasins IDF' ? 'Peu de signalements publics en magasin : note les tiens dans Stocks, ils nourrissent ta veille.' : 'Essaie un autre filtre.')]));
+      signalFilter === 'Magasins IDF' ? 'Peu de signalements publics en magasin dans les grandes enseignes : note les tiens avec « Signaler un stock vu ».' :
+      signalFilter === 'Bonnes affaires' ? 'Aucune grande enseigne au prix boutique en ce moment. Tu seras alerté dès que ça bouge ; la grille Boutiques te permet de vérifier en un tap.' : 'Essaie un autre filtre.')]));
   };
   paint();
   return [
     el('section', 'section',
-      sectionTitle('Au prix public, maintenant'),
+      sectionTitle('Au prix boutique, maintenant', link('Grille des prix boutique', '#boutiques', { variant: 'quiet', symbol: 'arrow' })),
       el('p', 'mini muted', 'Mis à jour ' + ago(feed.generatedAt) + ' · ' + okSources + '/' + sources.length +
         ' sources lues · Auchan, Leclerc, Dealabs, Restock Collector et tes fiches suivies.'),
-      el('div', 'record-grid', ...(available.length ? available.map(signalCard) : [empty('search', 'Rien au prix public pour l’instant',
-        'Les produits 30 ans et Règne Delta sont surveillés toutes les ~15 min. Une alerte part dès qu’un prix public réapparaît.')]))),
+      el('div', 'record-grid', ...(available.length ? available.map(signalCard) : [empty('search', 'Rien au prix boutique en ligne pour l’instant',
+        'Auchan et Leclerc sont relus à chaque passage pour les produits 30 ans et Règne Delta. Une alerte part dès qu’un prix boutique réapparaît.')]))),
+    huntList(feed),
     el('section', 'section',
       sectionTitle('Signaux récents'),
       filterBar(SIGNAL_FILTERS, signalFilter, value => { signalFilter = value; paint(); }),
@@ -519,7 +544,7 @@ function radarSections() {
 function home() {
   const campaigns = publicRaffles().filter(row => raffleStatus(row) === 'Annoncé par l’enseigne');
   return [
-    heading('Ton radar Pokémon', 'Où trouver du stock, en magasin et en ligne, au prix public.',
+    heading('Ton radar Pokémon', 'Où trouver du stock au prix boutique dans les grandes enseignes, en magasin et en ligne.',
       link('Signaler un stock vu', '#stocks', { variant: 'primary', symbol: 'plus' })),
     ...campaigns.map(campaign => el('div', 'campaign',
       el('span', 'tile', icon('ticket')),
@@ -646,16 +671,73 @@ function marginCard() {
   return el('section', 'section panel', sectionTitle('Calculer une marge'), el('p', 'muted', 'Simulation à partir de tes hypothèses et des frais renseignés.'), form);
 }
 
+const CHECK_SHOPS = [
+  ['Fnac', q => 'https://www.fnac.com/SearchResult/ResultList.aspx?Search=' + encodeURIComponent(q)],
+  ['Cultura', q => 'https://www.cultura.com/search/results?search_query=' + encodeURIComponent(q)],
+  ['Carrefour', q => 'https://www.carrefour.fr/s?q=' + encodeURIComponent(q)],
+  ['Auchan', q => 'https://www.auchan.fr/recherche?text=' + encodeURIComponent(q)],
+  ['Leclerc', q => 'https://www.e.leclerc/recherche?q=' + encodeURIComponent(q)],
+  ['Smyths', q => 'https://www.smythstoys.com/fr/fr-fr/search/?text=' + encodeURIComponent(q)],
+  ['Grande Récré', q => 'https://www.lagranderecre.fr/catalogsearch/result/?q=' + encodeURIComponent(q)],
+  ['Amazon', q => 'https://www.amazon.fr/s?k=' + encodeURIComponent(q) + '&rh=p_6%3AA1X6FK5RDHNB96']
+];
+
+function gridState(entry) {
+  if (!entry) return el('span', 'mini muted', 'pas encore lu');
+  if (entry.state === 'boutique') {
+    const node = el('a', 'grid-state ok', '✓ En stock au prix boutique · ' + euro.format(entry.price) + (entry.seller && !/^(Auchan|E\.Leclerc)$/.test(entry.seller) ? ' (vendu par ' + entry.seller + ')' : ''));
+    node.href = entry.url; node.target = '_blank'; node.rel = 'noopener noreferrer';
+    return node;
+  }
+  if (entry.state === 'revendeurs') return el('span', 'grid-state resale-only', 'Revendeurs seulement · dès ' + euro.format(entry.price));
+  return el('span', 'grid-state none', 'Rien en ligne');
+}
+
+function priceGrid() {
+  const feed = signalsFeed;
+  if (!feed?.catalog?.length) return [empty('radar', 'Grille en cours de chargement', 'Elle apparaît après le prochain passage du collecteur.')];
+  const sets = [...new Set(feed.catalog.map(product => product.set))];
+  return [
+    el('div', 'data-note', icon('search'), el('div', '',
+      el('strong', '', 'Prix boutique, pas prix revendeur'),
+      el('p', '', 'Auchan et Leclerc sont lus automatiquement (dernière lecture ' + ago(feed.generatedAt) + '). Fnac, Cultura, Carrefour et les autres bloquent les robots : vérifie en un tap, puis choisis ton magasin sur leur site pour voir le stock près de chez toi. Aucune enseigne ne publie les quantités.'))),
+    ...sets.map(set => el('section', 'section',
+      sectionTitle(set),
+      el('div', 'record-grid', ...feed.catalog.filter(product => product.set === set).map(product => {
+        const row = feed.grid?.[product.id] ?? {};
+        const market = feed.market?.[product.id];
+        const margin = market ? Math.round((market.median - product.price) * 100) / 100 : null;
+        const query = 'pokemon ' + product.name.replace(/\(.*\)/, '');
+        return el('article', 'record grid-card',
+          el('div', 'record-top', badge(set, set === '30 ans' ? 'gold' : 'mint'),
+            el('strong', 'price', (product.approx ? '≈ ' : '') + euro.format(product.price))),
+          el('h3', '', product.name),
+          el('p', 'mini muted', 'Prix boutique de référence' + (product.approx ? ' (estimé)' : '')),
+          market ? el('p', 'mini resale', 'Revente observée ~' + euro.format(market.median) + (margin > 0 ? ' → marge ~+' + euro.format(margin) + ' par pièce' : '')) : null,
+          el('div', 'grid-rows',
+            el('div', 'grid-row', el('strong', '', 'Auchan'), gridState(row.Auchan)),
+            el('div', 'grid-row', el('strong', '', 'Leclerc'), gridState(row['E.Leclerc']))),
+          el('p', 'mini muted', 'Vérifier en un tap :'),
+          el('div', 'chips check-links', ...CHECK_SHOPS.map(([name, url]) => {
+            const node = el('a', 'badge lavender', name);
+            node.href = url(query); node.target = '_blank'; node.rel = 'noopener noreferrer';
+            return node;
+          })));
+      }))))
+  ];
+}
+
 function boutiques() {
   const section = location.hash.split('/')[1];
-  const shopLink = link('Où acheter', '#boutiques', { variant: 'chip', symbol: 'bag' });
+  const gridLink = link('Prix boutique', '#boutiques', { variant: 'chip', symbol: 'search' });
   const drawLink = link('Tirages et invitations', '#boutiques/tirages', { variant: 'chip', symbol: 'ticket' });
-  const watchLink = link('Offres 30 ans', '#boutiques/veille', { variant: 'chip', symbol: 'search' });
-  (section === 'tirages' ? drawLink : section === 'veille' ? watchLink : shopLink).setAttribute('aria-current', 'page');
+  const watchLink = link('Amazon', '#boutiques/veille', { variant: 'chip', symbol: 'box' });
+  const shopLink = link('Toutes les enseignes', '#boutiques/enseignes', { variant: 'chip', symbol: 'bag' });
+  ({ tirages: drawLink, veille: watchLink, enseignes: shopLink }[section] ?? gridLink).setAttribute('aria-current', 'page');
   return [
-    heading('Boutiques et tirages', 'Trouve les pages d’achat, les conditions d’accès et les formulaires officiels.'),
-    el('nav', 'subnav', watchLink, drawLink, shopLink),
-    section === 'tirages' ? raffleDirectory() : section === 'veille' ? watchPanel('all') : shopDirectory()
+    heading('Boutiques', 'Prix boutique des grandes enseignes, vérification en un tap, tirages et invitations.'),
+    el('nav', 'subnav', gridLink, drawLink, watchLink, shopLink),
+    ...(section === 'tirages' ? [raffleDirectory()] : section === 'veille' ? [watchPanel('all')] : section === 'enseignes' ? [shopDirectory()] : priceGrid())
   ];
 }
 
@@ -895,7 +977,7 @@ function render() {
     if (item.dataset.route === active) item.setAttribute('aria-current', 'page');
     else item.removeAttribute('aria-current');
   }
-  screen.replaceChildren(...views[active]());
+  screen.replaceChildren(...views[active]().filter(Boolean));
 }
 
 function renderWhenIdle() {

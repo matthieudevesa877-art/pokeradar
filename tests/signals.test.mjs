@@ -37,14 +37,6 @@ test('prix public vs revente', () => {
   assert.equal(isPublicPrice('Objet inconnu', 10), null);
 });
 
-test('importance : pas de revente, pas de petits boosters en ligne, magasin IDF toujours', () => {
-  const base = { tcg: true, targets: ['30 ans'], kind: 'en ligne', zone: '', big: false };
-  assert.equal(isImportant({ ...base, title: 'ETB 30 ans', publicPrice: true }), true);
-  assert.equal(isImportant({ ...base, title: 'ETB 30 ans', publicPrice: false }), false);
-  assert.equal(isImportant({ ...base, title: 'Booster 30 ans', publicPrice: true }), false);
-  assert.equal(isImportant({ ...base, targets: [], title: 'Booster', kind: 'magasin', zone: 'IDF', publicPrice: null }), true);
-  assert.equal(isImportant({ ...base, tcg: false, title: 'ETB', publicPrice: true }), false);
-});
 
 test('Dealabs RSS', () => {
   const xml = `<rss><channel><item><title><![CDATA[Coffret Dresseur d'Élite Pokémon 30 ans]]></title><link>https://www.dealabs.com/bons-plans/etb-30-ans-3459999</link>
@@ -133,26 +125,62 @@ test('tendances : jour et créneau à l’heure de Paris, grandes enseignes d’
   assert.equal(result['E.Leclerc'].bestSlot, 'matin');
 });
 
-test('marché de revente : médiane des offres au-dessus du prix public, marge estimée', async () => {
-  const { buildMarket, productKey, withResale } = await import('../collector/signals/market.mjs');
-  assert.equal(productKey('Pokébox 30e anniversaire Nymphali-ex'), productKey('Asmodee Pokébox 30e Anniversaire Nymphali-ex 270'));
-  assert.notEqual(productKey('Pokébox 30e anniversaire Nymphali-ex'), productKey('Pokébox 30e anniversaire Amphinobi-ex'));
-  assert.equal(productKey('Coffret Pokémon 30e anniversaire'), null); // trop vague
-  const offers = [
-    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 74.95, available: true },
-    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 64.95, available: true },
-    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 26.99, available: true }, // prix public : ignoré
-    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 999, available: true } // aberrant : ignoré
-  ];
-  const market = buildMarket(offers, {}, Date.parse('2026-11-17T10:00:00Z'));
-  const key = productKey('Pokébox Nymphali-ex 30 ans');
-  assert.equal(market[key].median, 69.95);
-  const enriched = withResale({ title: 'Pokébox 30 ans Nymphali-ex', price: 26.99, publicPrice: true }, market);
-  assert.equal(enriched.margin, 42.96);
-  assert.equal(withResale({ title: 'Booster quelconque', price: 5 }, market).resale, undefined);
-});
 
 test('magasins parisiens au nom trompeur', () => {
   assert.equal(placeOf('Nouveau retrait en magasin : Métamorph chez UltraJeux (Rennes-Raspail)').zone, 'IDF');
   assert.equal(placeOf('Nouveau retrait en magasin : Métamorph chez UltraJeux (Rennes-Raspail)').dept, '75');
+});
+
+test('importance : grandes enseignes au prix boutique, jamais revente ni précommande ; UPC partout', () => {
+  const base = { tcg: true, targets: ['30 ans'], kind: 'en ligne', zone: '', big: true, preorder: false };
+  assert.equal(isImportant({ ...base, title: 'ETB 30 ans', publicPrice: true }), true);
+  assert.equal(isImportant({ ...base, title: 'ETB 30 ans', publicPrice: false }), false);
+  assert.equal(isImportant({ ...base, title: 'ETB 30 ans', publicPrice: true, preorder: true }), false);
+  assert.equal(isImportant({ ...base, big: false, title: 'ETB 30 ans', publicPrice: true }), false); // boutique spécialisée
+  assert.equal(isImportant({ ...base, big: false, title: 'UPC Noctali', publicPrice: true, catalogId: 'upc-noctali', verdict: 'prix boutique' }), true);
+  assert.equal(isImportant({ ...base, title: 'Booster 30 ans', publicPrice: true }), false);
+  assert.equal(isImportant({ ...base, targets: [], title: 'Booster', kind: 'magasin', zone: 'IDF', publicPrice: null }), true);
+});
+
+test('catalogue : reconnaissance des produits et grille enseigne × produit', async () => {
+  const { catalogMatch, buildGrid } = await import('../collector/signals/catalog.mjs');
+  assert.equal(catalogMatch('Pokémon Coffret Dresseur d’Élite 30e Anniversaire')?.id, 'etb-30');
+  assert.equal(catalogMatch('Coffret Dresseur d’Élite (ETB) Méga-Évolution : Règne Delta')?.id, 'etb-delta');
+  assert.equal(catalogMatch('Collection Ultra-Premium 30 ans Noctali')?.id, 'upc-noctali');
+  assert.equal(catalogMatch('Pokébox 30e anniversaire Nymphali-ex')?.id, 'nymphali');
+  assert.equal(catalogMatch('Collection Premium Méga-Amphinobi-ex'), null);
+  assert.equal(catalogMatch('Peluche Mewtwo 30 cm'), null);
+  const grid = buildGrid([
+    { retailer: 'Auchan', name: 'Pokébox 30e anniversaire Nymphali-ex', price: 26.99, available: true, url: 'https://a', seller: 'Auchan' },
+    { retailer: 'E.Leclerc', name: 'Pokébox 30e anniversaire Nymphali-ex', price: 74.95, available: true, url: 'https://b', seller: 'X' },
+    { retailer: 'E.Leclerc', name: 'Collection figurine Mew 30 ans', price: 1030, available: true, url: 'https://c', seller: 'X' }
+  ]);
+  assert.equal(grid.nymphali.Auchan.state, 'boutique');
+  assert.equal(grid.nymphali['E.Leclerc'].state, 'revendeurs');
+  assert.equal(grid.mew['E.Leclerc'].state, 'absent'); // prix aberrant écarté
+});
+
+test('analyse de prix : verdict, revente, marge, bonne affaire', async () => {
+  const { analyze, buildMarket } = await import('../collector/signals/market.mjs');
+  const market = buildMarket([
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 74.95, available: true },
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 64.95, available: true },
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 26.99, available: true }
+  ], {}, Date.parse('2026-11-17T10:00:00Z'));
+  assert.equal(market.nymphali.median, 69.95);
+  const shop = analyze({ title: 'Pokébox 30 ans Nymphali-ex chez Auchan', price: 26.99, tcg: true, big: true, kind: 'en ligne' }, market);
+  assert.deepEqual([shop.verdict, shop.margin, shop.deal, shop.refPrice], ['prix boutique', 42.96, true, 26.99]);
+  const resale = analyze({ title: 'Collection Premium Métamorph 30 ans chez UltraJeux', price: 99.9, tcg: true, big: false, kind: 'magasin' }, market);
+  assert.deepEqual([resale.verdict, resale.deal], ['revente', false]);
+  const store = analyze({ title: 'Pokébox Nymphali-ex vue en rayon', price: null, tcg: true, big: true, kind: 'magasin' }, market);
+  assert.deepEqual([store.verdict, store.deal, store.margin], ['à vérifier', true, 42.96]);
+  assert.equal(analyze({ title: 'Précommande ETB 30 ans', price: 55, tcg: true, big: true, kind: 'en ligne' }, market).deal, false);
+});
+
+test('catalogue : les produits dérivés ne passent jamais pour des cartes', async () => {
+  const { catalogMatch } = await import('../collector/signals/catalog.mjs');
+  for (const title of ["Pokemon Ceinture Poké Ball - POKEMON - Clip'N Go Métamorph - figurine incluse", 'Parure de lit POKEMON Pikachu, Mew & Métamorph',
+    'Figurine Pokémon Select 15cm Super-Articulée Mewtwo', 'Peluche Mew 20 cm', 'Figurine Mew 30e anniversaire']) {
+    assert.equal(catalogMatch(title), null, title);
+  }
 });

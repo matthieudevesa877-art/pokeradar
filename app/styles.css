@@ -271,3 +271,14 @@ body:has(dialog[open]) { overflow: hidden; }
 .trend-bars small { font-size: .62rem; color: var(--muted); line-height: 1; }
 .trend-heading { margin: 16px 0 8px; font-size: .92rem; color: var(--muted); }
 .resale { color: #195e51; font-weight: 650; }
+.grid-rows { display: grid; gap: 6px; margin: 4px 0; }
+.grid-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 10px; padding: 8px 10px; border-radius: 10px; background: #f7f3fc; font-size: .86rem; }
+.grid-state { font-weight: 650; }
+.grid-state.ok { color: #195e51; }
+.grid-state.resale-only { color: #6b5e7a; }
+.grid-state.none { color: #8a7f98; font-weight: 500; }
+.check-links .badge { text-decoration: none; }
+.hunt-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 8px; }
+.hunt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.hunt > div { min-width: 0; }
+.hunt-margin { color: #195e51; font-size: 1.05rem; white-space: nowrap; }
