@@ -128,9 +128,11 @@ export function mergeSignalFiles(local, remote) {
   for (const [name, value] of Object.entries(local.sources ?? {})) {
     if (!sources[name] || String(value.lastTryAt) > String(sources[name].lastTryAt)) sources[name] = value;
   }
-  const market = { ...remote.market };
+  // Seules les entrées du catalogue actuel sont gardées (anciens formats écartés).
+  const known = new Set(CATALOG.map(product => product.id));
+  const market = Object.fromEntries(Object.entries(remote.market ?? {}).filter(([key]) => known.has(key)));
   for (const [key, value] of Object.entries(local.market ?? {})) {
-    if (!market[key] || value.updated > market[key].updated) market[key] = value;
+    if (known.has(key) && (!market[key] || value.updated > market[key].updated)) market[key] = value;
   }
   const grid = String(local.generatedAt) >= String(remote.generatedAt) ? local.grid : remote.grid;
   const finalSignals = finalize(signals, market);
