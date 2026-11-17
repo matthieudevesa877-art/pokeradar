@@ -22,11 +22,17 @@ Pour publier un nouveau relevé, mets à jour les offres dans `veille.json` apr�
 
 Le bouton recharge le dernier relevé publié. Le projet a encore besoin d’une source ou d’un collecteur pour vérifier les boutiques et écrire de nouvelles observations sans intervention. Les règles de stock lisent les observations publiques récentes et les relevés personnels. Les règles de prix utilisent les offres de ton carnet dont le prix livré est connu.
 
+## L'appli : 3 onglets
+
+- **Radar** : ce qui est au prix boutique maintenant chez Auchan et Leclerc, « Quoi chercher en priorité » (produits classés par marge estimée), bonnes affaires des grandes enseignes (revendeurs et précommandes exclus), prochaines sorties.
+- **Rentable ?** : calculateur (produit + prix vu → « Achète », « Marge faible » ou « Passe ton chemin », marge après ~10 % de frais), grille prix boutique par produit avec l'état Auchan / Leclerc et la vérification en un tap (Fnac, Cultura, Carrefour, Auchan, Leclerc, Smyths, La Grande Récré, Amazon vendu par Amazon).
+- **Mes magasins** : « J'ai vu du stock » en 2 secondes, meilleurs jours par magasin d'après tes repérages, carte et téléphone des enseignes autour de ta ville.
+- Marché, Alertes, Tirages, annuaire des enseignes et fiches revendeurs ont été retirés (non rentables pour l'achat-revente). Les anciens liens redirigent vers le bon onglet.
+
 ## Radar en direct (`collector/signals/`)
 
-La page d'accueil montre **où acheter maintenant** : offres 30 ans et Règne Delta **au prix public** (Auchan, Leclerc), signaux récents filtrables (importants, magasins en Île-de-France, 30 ans, Règne Delta, prix public), jours de réassort par enseigne et prochaines vagues.
-
-- Sources lues à chaque passage : flux RSS Pokémon de Dealabs (annonces, parfois en magasin), flux RSS de Restock Collector (boutiques spécialisées), pages de recherche publiques d'Auchan et de Leclerc, réassorts détectés sur les fiches suivies. Chaque signal est classé : enseigne, lieu (communes et départements d'Île-de-France), cible (30 ans, Règne Delta…), type (magasin / en ligne), prix public ou revente (`classify.mjs`).
+- Catalogue des produits suivis et de leur prix boutique de référence : `catalog.mjs`. Analyse de prix (verdict, revente observée, marge, bonne affaire) : `market.mjs`.
+- Sources : flux RSS Pokémon de Dealabs, flux RSS de Restock Collector, pages de recherche publiques d'Auchan et de Leclerc (6 recherches ciblées chacune, au plus toutes les 20 min, pause après deux erreurs de suite ; la grille précédente est gardée si une enseigne n'a pas été lue), fiches Amazon suivies. Chaque signal est classé : enseigne, lieu (communes et départements d'Île-de-France), cible (30 ans, Règne Delta…), type (magasin / en ligne), prix public ou revente (`classify.mjs`).
 - Écartées après essai : X/Twitter (fil public figé et bloqué, API payante), Fnac, Cultura, King Jouet, Carrefour, Micromania, Smyths, Intermarché, Pokémon Center (protections anti-robot), commentaires Dealabs (API interne). Aucune protection n'est contournée.
 - **Alertes téléphone** : chaque nouveau signal important (30 ans ou Règne Delta au prix public sur un produit qui compte, ou magasin en Île-de-France) part sur [ntfy](https://ntfy.sh). Le sujet privé est dans le secret GitHub `NTFY_TOPIC` et, sur le PC, dans `collector/.env` (jamais publié). Le premier passage n'alerte pas ; ensuite 6 alertes maximum par passage, sans doublon entre PC et GitHub.
 - Tendances : jours et créneaux par enseigne (grandes enseignes d'abord), plus « Mes magasins » calculé depuis tes repérages « Disponible signalé » de l'onglet Stocks.

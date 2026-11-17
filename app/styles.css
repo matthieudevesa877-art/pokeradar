@@ -282,3 +282,12 @@ body:has(dialog[open]) { overflow: hidden; }
 .hunt { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
 .hunt > div { min-width: 0; }
 .hunt-margin { color: #195e51; font-size: 1.05rem; white-space: nowrap; }
+.calc { margin-top: 18px; }
+.calc-inputs { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px; }
+.calc-field { display: grid; gap: 5px; min-width: 0; }
+.calc-field select, .calc-field input { width: 100%; min-height: 46px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; font-size: 16px; }
+.calc-result { display: grid; gap: 8px; margin-top: 12px; }
+.verdict { padding: 13px 15px; border-radius: 13px; }
+.verdict strong { display: block; font-size: 1.15rem; }
+.verdict p { margin-top: 3px; font-size: .9rem; }
+@media (max-width: 520px) { .calc-inputs { grid-template-columns: 1fr; } }

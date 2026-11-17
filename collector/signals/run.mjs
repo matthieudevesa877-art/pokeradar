@@ -11,7 +11,7 @@ import { classify, isImportant, isPublicPrice, placeOf } from './classify.mjs';
 import { patterns } from './patterns.mjs';
 import { analyze, buildMarket } from './market.mjs';
 import { buildGrid, catalogMatch, CATALOG } from './catalog.mjs';
-const CATALOG_INFO = CATALOG.map(({ id, set, name, price, approx }) => ({ id, set, name, price, approx: Boolean(approx) }));
+const CATALOG_INFO = CATALOG.map(({ id, set, name, price, cap, approx }) => ({ id, set, name, price, cap, approx: Boolean(approx) }));
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DATA = process.env.POKERADAR_DATA_DIR ? join(ROOT, process.env.POKERADAR_DATA_DIR) : join(ROOT, 'app');
@@ -21,6 +21,7 @@ const KEEP_DAYS = 45;
 const MAX_SIGNALS = 1500;
 const ALERT_WINDOW_MS = 6 * 3600000;
 const MAX_ALERTS = 6;
+const RETAIL_INTERVAL_MS = 20 * 60000;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 const say = text => console.log(`[${new Date().toLocaleTimeString('fr-FR')}] ${text}`);
 const stamp = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -124,9 +125,10 @@ export function mergeSignalFiles(local, remote) {
   for (const [key, value] of Object.entries(local.watch ?? {})) {
     if (!watch[key] || value.lastSeen > watch[key].lastSeen) watch[key] = value;
   }
-  const sources = { ...remote.sources };
+  const current = new Set(SOURCES.map(source => source.name));
+  const sources = Object.fromEntries(Object.entries(remote.sources ?? {}).filter(([name]) => current.has(name)));
   for (const [name, value] of Object.entries(local.sources ?? {})) {
-    if (!sources[name] || String(value.lastTryAt) > String(sources[name].lastTryAt)) sources[name] = value;
+    if (current.has(name) && (!sources[name] || String(value.lastTryAt) > String(sources[name].lastTryAt))) sources[name] = value;
   }
   // Seules les entrées du catalogue actuel sont gardées (anciens formats écartés).
   const known = new Set(CATALOG.map(product => product.id));
@@ -171,11 +173,25 @@ async function notify(signals) {
 export async function runSignals({ alert = true } = {}) {
   const previous = await readJson(FILE, null);
   const firstRun = !previous;
-  const health = { ...(previous?.sources ?? {}) };
+  // Santé des sources : seulement celles lues aujourd'hui (les anciennes recherches disparaissent).
+  const health = Object.fromEntries(Object.entries(previous?.sources ?? {}).filter(([name]) => SOURCES.some(source => source.name === name)));
   const incoming = [];
   const offersSeen = new Map();
+  const failuresByShop = {};
+  // Les pages des enseignes sont relues au plus toutes les 20 min (le PC et GitHub peuvent tourner plus souvent).
+  const retailDue = SOURCES.filter(source => source.offers).some(source => {
+    const last = health[source.name]?.lastTryAt;
+    return !last || Date.now() - Date.parse(last) >= RETAIL_INTERVAL_MS;
+  });
+  let retailRan = true;
   for (const source of SOURCES) {
     const h = health[source.name] ?? {};
+    const shop = source.offers ? source.name.split(' ')[0] : null;
+    if (shop && (!retailDue || (failuresByShop[shop] ?? 0) >= 2)) {
+      retailRan = false;
+      if (retailDue) health[source.name] = { ...h, state: 'en pause', lastTryAt: stamp(), lastError: 'Deux erreurs de suite sur ce site : pause jusqu’au prochain passage.' };
+      continue;
+    }
     try {
       const body = await fetchText(source.url);
       let items;
@@ -190,24 +206,26 @@ export async function runSignals({ alert = true } = {}) {
         say(`✓ ${source.name} : ${items.length} élément(s), ${items.filter(item => item.tcg).length} JCC.`);
       }
       health[source.name] = { state: 'ok', lastTryAt: stamp(), lastOkAt: stamp(), items: items.length };
+      if (shop) failuresByShop[shop] = 0;
     } catch (error) {
       health[source.name] = { ...h, state: error.kind ?? 'erreur', lastTryAt: stamp(), lastError: error.message };
+      if (shop) { failuresByShop[shop] = (failuresByShop[shop] ?? 0) + 1; retailRan = false; }
       say(`✗ ${source.name} : ${error.message}`);
     }
     await log({ source: source.name, ...health[source.name] });
     await new Promise(resolve => setTimeout(resolve, 1500));
   }
   const watch = { ...(previous?.watch ?? {}) };
-  const { signals: offerSignals, available: availableNow } = signalsFromOffers([...offersSeen.values()], watch);
+  // Enseignes non relues à ce passage : on garde les offres et la grille précédentes (jamais un faux « rien »).
+  const offerResult = retailRan ? signalsFromOffers([...offersSeen.values()], watch) : { signals: [], available: previous?.available ?? [] };
+  const { signals: offerSignals, available: availableNow } = offerResult;
   incoming.push(...offerSignals);
   incoming.push(...signalsFromEvents((await readJson(EVENTS, { events: [] })).events ?? []));
 
   const known = new Set((previous?.signals ?? []).map(item => item.id));
   const allOffers = [...offersSeen.values()];
   const market = buildMarket(allOffers, previous?.market);
-  // Sources des enseignes en échec : on garde la grille précédente plutôt que d'afficher « pas vu ».
-  const retailOk = Object.entries(health).filter(([name]) => /^(Auchan|Leclerc)/.test(name)).every(([, value]) => value.state === 'ok');
-  const grid = retailOk || !previous?.grid ? buildGrid(allOffers) : previous.grid;
+  const grid = retailRan || !previous?.grid ? buildGrid(allOffers) : previous.grid;
   const signals = finalize(mergeSignals(previous?.signals, incoming), market);
   const available = finalize(availableNow, market);
   const fresh = signals.filter(item => !known.has(item.id));
