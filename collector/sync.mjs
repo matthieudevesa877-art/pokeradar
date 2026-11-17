@@ -7,24 +7,33 @@
 //   node collector/sync.mjs --no-push      collecte et fusionne, sans publier
 import { execFileSync, spawnSync } from 'node:child_process';
 import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { summarize } from './engine.mjs';
 import { mergeEvents, mergeHealth, mergeLatest, mergeSeed } from './merge-seed.mjs';
 import { decodeWatch } from '../app/watch.mjs';
+import { mergeSignalFiles } from './signals/run.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_REL = 'collector/data';
 const DATA = join(ROOT, DATA_REL);
 const SEED = join(ROOT, 'app', 'veille.json');
-const FILES = { feed: 'veille.json', events: 'evenements.json', health: 'sante.json' };
+const FILES = { feed: 'veille.json', events: 'evenements.json', health: 'sante.json', signals: 'signaux.json' };
 const args = process.argv.slice(2);
 const flag = name => args.includes(name);
 const option = name => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const say = text => console.log(`[${new Date().toLocaleTimeString('fr-FR')}] ${text}`);
 const SOURCE = process.env.GITHUB_ACTIONS ? 'github' : 'pc';
+
+// Réglages privés du PC (ex. NTFY_TOPIC) : collector/.env, jamais publié (ignoré par Git).
+try {
+  for (const line of readFileSync(join(ROOT, 'collector', '.env'), 'utf8').split(/\r?\n/)) {
+    const match = /^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$/.exec(line);
+    if (match && !process.env[match[1]]) process.env[match[1]] = match[2];
+  }
+} catch { /* pas de réglages privés */ }
 
 function git(gitArgs, env) {
   return execFileSync('git', gitArgs, { cwd: ROOT, encoding: 'utf8', maxBuffer: 50e6, stdio: ['ignore', 'pipe', 'pipe'], env: env ? { ...process.env, ...env } : process.env }).trim();
@@ -49,7 +58,7 @@ function fetchRemote() {
   if (!sha) return null; // première publication : la branche data n'existe pas encore
   git(['fetch', '--depth=1', 'origin', 'data']);
   const read = name => { try { return JSON.parse(git(['show', `FETCH_HEAD:app/${name}`])); } catch { return null; } };
-  return { sha, feed: read(FILES.feed), events: read(FILES.events), health: read(FILES.health) };
+  return { sha, feed: read(FILES.feed), events: read(FILES.events), health: read(FILES.health), signals: read(FILES.signals) };
 }
 
 async function restore() {
@@ -61,6 +70,8 @@ async function restore() {
   await writeJson(FILES.feed, mergeSeed(seed, base));
   await writeJson(FILES.events, { version: 1, events: (remote?.events ?? await readLocal(FILES.events))?.events ?? [] });
   await writeJson(FILES.health, remote?.health ?? await readLocal(FILES.health) ?? { version: 1, hosts: {}, offers: {} });
+  const signals = mergeSignalFiles(await readLocal(FILES.signals), remote?.signals);
+  if (signals) await writeJson(FILES.signals, signals);
   say(remote ? 'Dernier relevé en ligne repris.' : 'Aucun relevé en ligne : départ depuis la liste du dépôt.');
 }
 
@@ -70,6 +81,10 @@ function collect() {
     cwd: ROOT, stdio: 'inherit', env: { ...process.env, POKERADAR_DATA_DIR: DATA_REL }
   });
   if (result.status !== 0 && result.status !== 2) throw new Error(`Le collecteur s'est arrêté (code ${result.status}).`);
+  const signals = spawnSync(process.execPath, [join(ROOT, 'collector', 'signals', 'run.mjs'), ...(flag('--no-alert') ? ['--no-alert'] : [])], {
+    cwd: ROOT, stdio: 'inherit', env: { ...process.env, POKERADAR_DATA_DIR: DATA_REL }
+  });
+  if (signals.status !== 0) say('Signaux : passage en échec, le reste est publié quand même.');
 }
 
 function commitAndPush(remote, message) {
@@ -77,6 +92,7 @@ function commitAndPush(remote, message) {
   const env = { GIT_INDEX_FILE: indexFile };
   try {
     for (const name of Object.values(FILES)) {
+      if (!existsSync(join(DATA, name))) continue;
       git(['update-index', '--add', '--cacheinfo', `100644,${git(['hash-object', '-w', join(DATA, name)])},app/${name}`], env);
     }
     const commit = git(['commit-tree', git(['write-tree'], env), '-m', message]);
@@ -98,6 +114,8 @@ async function publish() {
     await writeJson(FILES.feed, feed);
     await writeJson(FILES.events, { version: 1, events });
     await writeJson(FILES.health, sante);
+    const signals = mergeSignalFiles(await readLocal(FILES.signals), remote?.signals);
+    if (signals) await writeJson(FILES.signals, signals);
     if (flag('--no-push')) { say('Fusion faite, publication ignorée (--no-push).'); return; }
     try {
       commitAndPush(remote, `Relevé ${sante.generatedAt} (${SOURCE})`);

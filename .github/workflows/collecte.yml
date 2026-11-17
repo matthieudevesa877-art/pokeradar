@@ -36,10 +36,11 @@ jobs:
           GIT_AUTHOR_EMAIL: pokeradar-bot@users.noreply.github.com
           GIT_COMMITTER_NAME: pokeradar-bot
           GIT_COMMITTER_EMAIL: pokeradar-bot@users.noreply.github.com
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: node collector/sync.mjs
 
       - name: Mettre le relevé fusionné dans l'appli
-        run: cp collector/data/veille.json collector/data/evenements.json collector/data/sante.json app/
+        run: cp collector/data/*.json app/
 
       - name: Journal du passage
         if: always()

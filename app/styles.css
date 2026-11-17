@@ -256,3 +256,17 @@ body:has(dialog[open]) { overflow: hidden; }
   .page-heading { margin-bottom: 16px; }
   .panel, .record { padding: 14px; }
 }
+
+/* Radar en direct */
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.signal-when { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); }
+.signal h3 { font-size: .98rem; line-height: 1.3; overflow-wrap: anywhere; }
+.signal.is-important { border-color: #c9a7f2; box-shadow: 0 0 0 2px #efe4ff inset; }
+.trend-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 10px; }
+.trend { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.trend > div:first-child { min-width: 0; }
+.trend-bars { display: flex; align-items: flex-end; gap: 4px; height: 44px; flex: none; }
+.trend-bars span { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; width: 11px; height: 100%; }
+.trend-bars i { display: block; width: 100%; border-radius: 3px; background: #8a5cd0; }
+.trend-bars small { font-size: .62rem; color: var(--muted); line-height: 1; }
+.trend-heading { margin: 16px 0 8px; font-size: .92rem; color: var(--muted); }

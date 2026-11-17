@@ -76,6 +76,9 @@ let watchLoading;
 let watchRenderPending = false;
 let collectorHealth = null;
 let collectorEvents = null;
+let signalsFeed = null;
+let signalFilter = 'Importants';
+const SIGNAL_FILTERS = ['Importants', 'Magasins IDF', '30 ans', 'Règne Delta', 'Prix public', 'Tout JCC'];
 
 function el(tag, classes, ...children) {
   const node = document.createElement(tag);
@@ -393,43 +396,143 @@ function watchPanel(mode = 'preview') {
     search, bar, results, all ? collectorPanel() : null);
 }
 
-function home() {
-  const matches = currentAlerts().filter(item => item.rows.length).length;
-  const watchCount = data.alerts.length + data.followed.length;
-  const campaigns = publicRaffles().filter(row => raffleStatus(row) === 'Annoncé par l’enseigne');
-  const artwork = el('img', 'hero-art');
-  artwork.src = './assets/field.svg';
-  artwork.alt = '';
+function ago(iso) {
+  const minutes = Math.round((Date.now() - Date.parse(iso)) / 60000);
+  if (!Number.isFinite(minutes)) return '';
+  if (minutes < 1) return 'à l’instant';
+  if (minutes < 60) return 'il y a ' + minutes + ' min';
+  if (minutes < 48 * 60) return 'il y a ' + Math.round(minutes / 60) + ' h';
+  return 'il y a ' + Math.round(minutes / 1440) + ' j';
+}
+
+function signalMatches(item, filter) {
+  if (!item.tcg) return false;
+  if (filter === 'Importants') return item.important;
+  if (filter === 'Magasins IDF') return item.kind === 'magasin' && item.zone === 'IDF';
+  if (filter === '30 ans' || filter === 'Règne Delta') return item.targets.includes(filter);
+  if (filter === 'Prix public') return item.publicPrice === true;
+  return true;
+}
+
+function signalCard(item) {
+  const where = [item.retailer, item.place || (item.dept ? 'dép. ' + item.dept : ''), item.zone === 'Autre région' ? 'hors Île-de-France' : '']
+    .filter(Boolean).join(' · ');
+  const storeSearch = item.retailer && (item.kind === 'magasin' || item.big) ? mapUrl(item.retailer + ' ' + (item.place || item.dept || 'Suresnes')) : null;
+  return el('article', 'record signal' + (item.important ? ' is-important' : ''),
+    el('div', 'record-top',
+      el('span', 'signal-when', badge(item.kind === 'magasin' ? 'En magasin' : 'En ligne', item.kind === 'magasin' ? 'pink' : 'lavender'), ' ', ago(item.at)),
+      item.price ? el('strong', 'price', euro.format(item.price)) : null),
+    el('h3', '', item.title),
+    where ? el('p', 'muted', where) : null,
+    el('div', 'chips',
+      ...item.targets.map(target => badge(target, target === '30 ans' ? 'gold' : 'mint')),
+      item.publicPrice === true ? badge('Prix public', 'mint') : item.publicPrice === false ? badge('Prix revente', 'neutral') : null),
+    el('p', 'mini muted', 'Source : ' + item.source + ' · ' + fullDate.format(new Date(item.at))),
+    el('div', 'actions', out('Voir', item.link || item.url), storeSearch ? out('Magasins & téléphone', storeSearch, 'quiet') : null));
+}
+
+const DAY_NAMES = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+const weekday = new Intl.DateTimeFormat('fr-FR', { timeZone: ZONE, weekday: 'long' });
+
+// Mes propres repérages « Disponible signalé » (onglet Stocks), par magasin et par jour.
+function myPatterns() {
+  const stores = {};
+  for (const row of data.stocks) {
+    if (row.state !== 'Disponible signalé') continue;
+    const day = DAY_NAMES.indexOf(weekday.format(new Date(row.checked.length === 10 ? row.checked + 'T12:00:00Z' : row.checked)));
+    if (day < 0) continue;
+    const entry = stores[row.store] ??= { n: 0, magasin: 1, days: [0, 0, 0, 0, 0, 0, 0], bestDays: [], bestSlot: '', mine: true };
+    entry.n += 1;
+    entry.days[day] += 1;
+  }
+  for (const entry of Object.values(stores)) {
+    entry.bestDays = entry.days.map((count, index) => [count, DAY_NAMES[index]]).filter(([count]) => count > 0)
+      .sort((x, y) => y[0] - x[0]).slice(0, 2).map(([, day]) => day);
+  }
+  return stores;
+}
+
+function trendRow([name, entry]) {
+  const letters = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  const max = Math.max(...entry.days, 1);
+  return el('div', 'trend',
+    el('div', '', el('strong', '', name), el('p', 'mini muted',
+      (entry.mine ? entry.n + ' repérage(s) à moi' : entry.n + ' signal(s)' + (entry.magasin ? ' · ' + entry.magasin + ' en magasin' : '')) +
+      (entry.bestDays.length ? ' · surtout le ' + entry.bestDays.join(' et le ') : '') + (entry.bestSlot ? ' · ' + entry.bestSlot : ''))),
+    el('div', 'trend-bars', ...entry.days.map((count, index) => {
+      const bar = el('span', '', el('i', ''), el('small', '', letters[index]));
+      bar.firstChild.style.height = Math.max(2, Math.round(count / max * 28)) + 'px';
+      bar.title = count + ' le ' + DAY_NAMES[index];
+      return bar;
+    })));
+}
+
+function trendsPanel(patterns) {
+  const mine = Object.entries(myPatterns());
+  const all = Object.entries(patterns ?? {}).filter(([, entry]) => entry.n >= 2);
+  const big = all.filter(([, entry]) => entry.big).slice(0, 8);
+  const shops = all.filter(([, entry]) => !entry.big).slice(0, 4);
+  if (!mine.length && !all.length) return el('p', 'muted', 'Les tendances apparaîtront avec les premiers jours de collecte.');
+  return el('div', '',
+    mine.length ? el('h3', 'trend-heading', 'Mes magasins') : null,
+    mine.length ? el('div', 'trend-list', ...mine.map(trendRow)) : null,
+    big.length ? el('h3', 'trend-heading', 'Grandes enseignes') : null,
+    big.length ? el('div', 'trend-list', ...big.map(trendRow)) : null,
+    shops.length ? el('h3', 'trend-heading', 'Boutiques en ligne spécialisées') : null,
+    shops.length ? el('div', 'trend-list', ...shops.map(trendRow)) : null);
+}
+
+function radarSections() {
+  const feed = signalsFeed;
+  if (!feed) return [el('section', 'section', empty('radar', 'Radar en cours de chargement', 'Les signaux arrivent avec la prochaine actualisation.'))];
+  const sources = Object.entries(feed.sources ?? {});
+  const okSources = sources.filter(([, value]) => value.state === 'ok').length;
+  const available = (feed.available ?? []).filter(item => Date.now() - Date.parse(item.lastSeen) < 6 * 3600000);
+  const results = el('div', 'record-grid');
+  const paint = () => {
+    const rows = feed.signals.filter(item => signalMatches(item, signalFilter)).slice(0, 40);
+    results.replaceChildren(...(rows.length ? rows.map(signalCard) : [empty('search', 'Aucun signal pour ce filtre',
+      signalFilter === 'Magasins IDF' ? 'Peu de signalements publics en magasin : note les tiens dans Stocks, ils nourrissent ta veille.' : 'Essaie un autre filtre.')]));
+  };
+  paint();
   return [
-    heading('Ton radar Pokémon', 'Invitations, prix et stocks avec leur dernière vérification.'),
+    el('section', 'section',
+      sectionTitle('Au prix public, maintenant'),
+      el('p', 'mini muted', 'Mis à jour ' + ago(feed.generatedAt) + ' · ' + okSources + '/' + sources.length +
+        ' sources lues · Auchan, Leclerc, Dealabs, Restock Collector et tes fiches suivies.'),
+      el('div', 'record-grid', ...(available.length ? available.map(signalCard) : [empty('search', 'Rien au prix public pour l’instant',
+        'Les produits 30 ans et Règne Delta sont surveillés toutes les ~15 min. Une alerte part dès qu’un prix public réapparaît.')]))),
+    el('section', 'section',
+      sectionTitle('Signaux récents'),
+      filterBar(SIGNAL_FILTERS, signalFilter, value => { signalFilter = value; paint(); }),
+      results),
+    el('section', 'section',
+      sectionTitle('Jours de réassort par enseigne'),
+      el('p', 'mini muted', 'Calculé sur les signaux des 60 derniers jours, à l’heure de Paris. Plus la collecte tourne, plus c’est fiable.'),
+      trendsPanel(feed.patterns))
+  ];
+}
+
+function home() {
+  const campaigns = publicRaffles().filter(row => raffleStatus(row) === 'Annoncé par l’enseigne');
+  return [
+    heading('Ton radar Pokémon', 'Où trouver du stock, en magasin et en ligne, au prix public.',
+      link('Signaler un stock vu', '#stocks', { variant: 'primary', symbol: 'plus' })),
     ...campaigns.map(campaign => el('div', 'campaign',
       el('span', 'tile', icon('ticket')),
       el('div', '', el('strong', '', campaign.brand + ' · ' + campaign.title), el('p', 'muted mini',
         [campaign.deadlineLabel, campaign.verified && ('Source consultée le ' + dateOnly.format(new Date(campaign.verified + 'T12:00:00Z')))].filter(Boolean).join(' · '))),
       out('Formulaire officiel', campaign.url))),
-    watchPanel(),
-    el('div', 'home-grid',
-      el('section', 'hero',
-        el('div', 'hero-text', el('p', 'hero-label', icon('radar'), 'Ton carnet Pokémon JCC'),
-          el('h2', '', 'Le carnet des collectionneurs'),
-          el('p', 'hero-description', 'Compare tes prix, repère les boutiques et garde tes prochains tirages en vue.'),
-          link('Explorer le marché', '#marche', { variant: 'gold-button', symbol: 'arrow' })
-        ), artwork),
-      el('section', 'snapshot',
-        sectionTitle('Ma veille', el('span', 'tile', icon('bell'))),
-        el('div', 'snapshot-row', el('span', '', 'Prix relevés'), el('strong', '', String(data.prices.length))),
-        el('div', 'snapshot-row', el('span', '', 'Relevés de stock'), el('strong', '', String(data.stocks.length))),
-        el('div', 'snapshot-row', el('span', '', 'Alertes et tirages suivis'), el('strong', '', String(watchCount))),
-        link(matches ? matches + ' alerte(s) à consulter' : 'Ouvrir ma veille', '#alertes', { variant: 'quiet', symbol: 'arrow' }))
-    ),
-    el('div', 'data-note', icon('search'), el('div', '',
-      el('strong', '', 'Archive du 7 novembre'),
-      link('Ouvrir le scan d’origine', ANNIVERSARY_SCAN, { variant: 'quiet', symbol: 'arrow' }))),
+    ...radarSections(),
     el('section', 'section',
-      sectionTitle('Le calendrier Pokémon', link('Tirages et invitations', '#boutiques/tirages', { variant: 'quiet', symbol: 'ticket' })),
-      el('div', 'release-grid', [...mergeWatchEntries(RELEASES, watch.releases), ...data.calendar].sort((a, b) => a.date.localeCompare(b.date)).map(releaseCard))),
-    el('div', 'data-note', icon('radar'),
-      el('div', '', el('strong', '', 'Des relevés datés'), el('p', '', 'Le carnet personnel conserve tes propres relevés. Ouvre la fiche marchande avant de te déplacer ou de commander.')))
+      sectionTitle('Prochaines vagues en magasin', link('Tirages et invitations', '#boutiques/tirages', { variant: 'quiet', symbol: 'ticket' })),
+      el('div', 'release-grid', [...mergeWatchEntries(RELEASES, watch.releases), ...data.calendar]
+        .filter(entry => entry.date >= new Date(Date.now() - 3 * 86400000).toISOString().slice(0, 10))
+        .sort((a, b) => a.date.localeCompare(b.date)).map(releaseCard))),
+    el('div', 'data-note', icon('bell'),
+      el('div', '', el('strong', '', 'Alertes sur ton téléphone'),
+        el('p', '', 'Installe l’appli gratuite ntfy et abonne-toi au sujet privé que Claude t’a donné : chaque nouveau signal important (30 ans ou Règne Delta au prix public, magasin en Île-de-France) arrive en notification.'),
+        out('ntfy sur l’App Store', 'https://apps.apple.com/app/ntfy/id1625396347', 'quiet')))
   ];
 }
 
@@ -815,7 +918,7 @@ function refreshWatch() {
       const response = await fetch('./veille.json', { cache: 'no-store', signal: controller.signal });
       if (!response.ok) throw new Error('Relevé indisponible');
       const next = decodeWatch(await response.json());
-      const [health, feed] = await Promise.all(['./sante.json', './evenements.json'].map(async path => {
+      const [health, feed, radar] = await Promise.all(['./sante.json', './evenements.json', './signaux.json'].map(async path => {
         try {
           const res = await fetch(path, { cache: 'no-store', signal: controller.signal });
           return res.ok ? await res.json() : null;
@@ -824,6 +927,13 @@ function refreshWatch() {
       const nextHealth = health && typeof health.hosts === 'object' && health.hosts ? health : null;
       const nextEvents = Array.isArray(feed?.events) ? feed.events.filter(event => event && typeof event.at === 'string' &&
         Number.isFinite(Date.parse(event.at)) && ['seller', 'product', 'type'].every(key => typeof event[key] === 'string')) : null;
+      const nextRadar = radar && Array.isArray(radar.signals) ? {
+        ...radar,
+        signals: radar.signals.filter(item => item && typeof item.title === 'string' && typeof item.at === 'string' && Array.isArray(item.targets)),
+        available: Array.isArray(radar.available) ? radar.available.filter(item => item && typeof item.title === 'string' && Array.isArray(item.targets)) : []
+      } : null;
+      const changedRadar = Boolean(nextRadar) && nextRadar.generatedAt !== signalsFeed?.generatedAt;
+      signalsFeed = nextRadar ?? signalsFeed;
       const changed = JSON.stringify(next) !== JSON.stringify(watch) ||
         JSON.stringify([nextHealth, nextEvents]) !== JSON.stringify([collectorHealth, collectorEvents]);
       collectorHealth = nextHealth;
@@ -833,7 +943,7 @@ function refreshWatch() {
       const latest = watch.offers.filter(row => row.status !== 'unknown')
         .sort((a, b) => b.observedAt.localeCompare(a.observedAt))[0];
       watchStatus.textContent = latest ? 'Dernier relevé marchand · ' + offerDate(latest) : 'Aucun relevé marchand publié.';
-      if (changed) renderWhenIdle();
+      if (changed || changedRadar) renderWhenIdle();
     } catch {
       watchStatus.textContent = watch.offers.length ?
         'Actualisation indisponible · dernier relevé conservé.' : 'Relevé indisponible · réessaie avec Internet.';
