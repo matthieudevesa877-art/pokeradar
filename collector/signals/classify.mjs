@@ -36,7 +36,7 @@ export const RETAILERS = [
 
 // Communes et centres commerciaux d'Île-de-France fréquents dans les signalements -> département.
 const IDF_PLACES = {
-  '75': ['Paris', 'Bercy', 'Châtelet', 'Les Halles', 'Montparnasse', 'Italie 2', 'Beaugrenelle', 'Saint-Lazare', 'Gare du Nord', 'Gare de Lyon', 'Batignolles', 'Bastille', 'Oberkampf', 'République'],
+  '75': ['Paris', 'Bercy', 'Châtelet', 'Les Halles', 'Montparnasse', 'Italie 2', 'Beaugrenelle', 'Saint-Lazare', 'Gare du Nord', 'Gare de Lyon', 'Batignolles', 'Bastille', 'Oberkampf', 'République', 'Rennes-Raspail', 'Rue de Rennes', 'Montparnasse-Bienvenüe', 'Opéra', 'Saint-Michel', 'Odéon', 'Forum des Halles', 'Bercy 2'],
   '77': ['Meaux', 'Melun', 'Chelles', 'Torcy', 'Serris', "Val d'Europe", 'Marne-la-Vallée', 'Pontault-Combault', 'Claye-Souilly', 'Collégien', 'Bay 2', 'Carré Sénart', 'Lieusaint', 'Savigny-le-Temple', 'Villiers-en-Bière', 'Fontainebleau', 'Lagny', 'Montévrain', 'Bussy-Saint-Georges'],
   '78': ['Versailles', 'Vélizy', 'Plaisir', 'Chambourcy', 'Saint-Germain-en-Laye', 'Poissy', 'Les Mureaux', 'Mantes', 'Parly 2', 'Le Chesnay', 'Trappes', 'Coignières', 'Sartrouville', 'Montesson', 'Saint-Quentin-en-Yvelines', 'Élancourt', 'Rambouillet', 'Houilles', 'Orgeval', 'Conflans'],
   '91': ['Évry', 'Corbeil', 'Massy', 'Les Ulis', 'Ulis 2', 'Brétigny', 'Sainte-Geneviève-des-Bois', 'Villebon', 'Palaiseau', 'Savigny-sur-Orge', 'Athis-Mons', 'Juvisy', 'Ris-Orangis', 'Viry-Châtillon', 'Montgeron', 'Brunoy', 'Étampes', 'Arpajon', 'Mennecy', 'Fleury-Mérogis', 'Évry 2'],

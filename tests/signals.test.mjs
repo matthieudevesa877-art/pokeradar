@@ -151,3 +151,8 @@ test('marché de revente : médiane des offres au-dessus du prix public, marge e
   assert.equal(enriched.margin, 42.96);
   assert.equal(withResale({ title: 'Booster quelconque', price: 5 }, market).resale, undefined);
 });
+
+test('magasins parisiens au nom trompeur', () => {
+  assert.equal(placeOf('Nouveau retrait en magasin : Métamorph chez UltraJeux (Rennes-Raspail)').zone, 'IDF');
+  assert.equal(placeOf('Nouveau retrait en magasin : Métamorph chez UltraJeux (Rennes-Raspail)').dept, '75');
+});

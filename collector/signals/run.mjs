@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { randomBytes } from 'node:crypto';
 import { SOURCES } from './sources.mjs';
-import { classify, isImportant, isPublicPrice } from './classify.mjs';
+import { classify, isImportant, isPublicPrice, placeOf } from './classify.mjs';
 import { patterns } from './patterns.mjs';
 import { buildMarket, withResale } from './market.mjs';
 
@@ -88,7 +88,9 @@ export function signalsFromOffers(offers, watch, now = Date.now()) {
 export function mergeSignals(previous = [], incoming = [], now = Date.now()) {
   const byId = new Map(previous.map(item => [item.id, item]));
   for (const item of incoming) byId.set(item.id, { ...byId.get(item.id), ...item });
-  const sorted = [...byId.values()].map(item => ({ ...item, important: isImportant(item) }))
+  // Le lieu est recalculé à chaque fusion : une correction de la liste des communes s'applique aussi aux anciens signaux.
+  const sorted = [...byId.values()].map(item => ({ ...item, ...placeOf(`${item.title}
+${item.text ?? ''}`) })).map(item => ({ ...item, important: isImportant(item) }))
     .filter(item => now - Date.parse(item.at) < KEEP_DAYS * 86400000)
     .sort((a, b) => b.at.localeCompare(a.at));
   // Même annonce répétée (variantes d'une même fiche, republications) : on n'en garde qu'une par tranche de 12 h.
