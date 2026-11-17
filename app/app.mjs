@@ -427,6 +427,9 @@ function signalCard(item) {
     el('div', 'chips',
       ...item.targets.map(target => badge(target, target === '30 ans' ? 'gold' : 'mint')),
       item.publicPrice === true ? badge('Prix public', 'mint') : item.publicPrice === false ? badge('Prix revente', 'neutral') : null),
+    Number.isFinite(item.resale) ? el('p', 'mini resale', 'Revente observée ~' + euro.format(item.resale) +
+      (Number.isFinite(item.margin) && item.margin > 0 ? ' · marge estimée +' + euro.format(item.margin) : '') +
+      ' (' + item.resaleN + ' offre' + (item.resaleN > 1 ? 's' : '') + ' de revendeurs)') : null,
     el('p', 'mini muted', 'Source : ' + item.source + ' · ' + fullDate.format(new Date(item.at))),
     el('div', 'actions', out('Voir', item.link || item.url), storeSearch ? out('Magasins & téléphone', storeSearch, 'quiet') : null));
 }

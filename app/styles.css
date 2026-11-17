@@ -270,3 +270,4 @@ body:has(dialog[open]) { overflow: hidden; }
 .trend-bars i { display: block; width: 100%; border-radius: 3px; background: #8a5cd0; }
 .trend-bars small { font-size: .62rem; color: var(--muted); line-height: 1; }
 .trend-heading { margin: 16px 0 8px; font-size: .92rem; color: var(--muted); }
+.resale { color: #195e51; font-weight: 650; }

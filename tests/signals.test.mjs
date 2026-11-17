@@ -132,3 +132,22 @@ test('tendances : jour et créneau à l’heure de Paris, grandes enseignes d’
   assert.deepEqual(result['E.Leclerc'].bestDays, ['mardi']);
   assert.equal(result['E.Leclerc'].bestSlot, 'matin');
 });
+
+test('marché de revente : médiane des offres au-dessus du prix public, marge estimée', async () => {
+  const { buildMarket, productKey, withResale } = await import('../collector/signals/market.mjs');
+  assert.equal(productKey('Pokébox 30e anniversaire Nymphali-ex'), productKey('Asmodee Pokébox 30e Anniversaire Nymphali-ex 270'));
+  assert.notEqual(productKey('Pokébox 30e anniversaire Nymphali-ex'), productKey('Pokébox 30e anniversaire Amphinobi-ex'));
+  assert.equal(productKey('Coffret Pokémon 30e anniversaire'), null); // trop vague
+  const offers = [
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 74.95, available: true },
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 64.95, available: true },
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 26.99, available: true }, // prix public : ignoré
+    { name: 'Pokébox 30e anniversaire Nymphali-ex', price: 999, available: true } // aberrant : ignoré
+  ];
+  const market = buildMarket(offers, {}, Date.parse('2026-11-17T10:00:00Z'));
+  const key = productKey('Pokébox Nymphali-ex 30 ans');
+  assert.equal(market[key].median, 69.95);
+  const enriched = withResale({ title: 'Pokébox 30 ans Nymphali-ex', price: 26.99, publicPrice: true }, market);
+  assert.equal(enriched.margin, 42.96);
+  assert.equal(withResale({ title: 'Booster quelconque', price: 5 }, market).resale, undefined);
+});

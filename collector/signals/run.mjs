@@ -9,6 +9,7 @@ import { randomBytes } from 'node:crypto';
 import { SOURCES } from './sources.mjs';
 import { classify, isImportant, isPublicPrice } from './classify.mjs';
 import { patterns } from './patterns.mjs';
+import { buildMarket, withResale } from './market.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DATA = process.env.POKERADAR_DATA_DIR ? join(ROOT, process.env.POKERADAR_DATA_DIR) : join(ROOT, 'app');
@@ -116,7 +117,11 @@ export function mergeSignalFiles(local, remote) {
   for (const [name, value] of Object.entries(local.sources ?? {})) {
     if (!sources[name] || String(value.lastTryAt) > String(sources[name].lastTryAt)) sources[name] = value;
   }
-  return { ...newer, signals, watch, sources, patterns: patterns(signals), notified: [...new Set([...(remote.notified ?? []), ...(local.notified ?? [])])].slice(-800) };
+  const market = { ...remote.market };
+  for (const [key, value] of Object.entries(local.market ?? {})) {
+    if (!market[key] || value.updated > market[key].updated) market[key] = value;
+  }
+  return { ...newer, signals: signals.map(item => withResale(item, market)), watch, sources, market, patterns: patterns(signals), notified: [...new Set([...(remote.notified ?? []), ...(local.notified ?? [])])].slice(-800) };
 }
 
 export function alertText(signal) {
@@ -183,8 +188,9 @@ export async function runSignals({ alert = true } = {}) {
   incoming.push(...signalsFromEvents((await readJson(EVENTS, { events: [] })).events ?? []));
 
   const known = new Set((previous?.signals ?? []).map(item => item.id));
-  const signals = mergeSignals(previous?.signals, incoming);
-  const available = availableNow.map(item => ({ ...item, important: isImportant(item) }));
+  const market = buildMarket([...offersSeen.values()], previous?.market);
+  const signals = mergeSignals(previous?.signals, incoming).map(item => withResale(item, market));
+  const available = availableNow.map(item => withResale({ ...item, important: isImportant(item) }, market));
   const fresh = signals.filter(item => !known.has(item.id));
   const notified = new Set(previous?.notified ?? []);
   const toAlert = firstRun ? [] : fresh.filter(item => isImportant(item) && !notified.has(item.id) && Date.now() - Date.parse(item.at) < ALERT_WINDOW_MS);
@@ -193,7 +199,7 @@ export async function runSignals({ alert = true } = {}) {
     try { sent = await notify(toAlert); toAlert.forEach(item => notified.add(item.id)); } catch (error) { say(`Alerte non envoyée : ${error.message}`); await log({ source: 'ntfy', state: 'erreur', lastError: error.message }); }
   }
   const output = {
-    version: 1, generatedAt: stamp(), sources: health, patterns: patterns(signals), available, watch,
+    version: 1, generatedAt: stamp(), sources: health, patterns: patterns(signals), available, watch, market,
     signals, notified: [...notified].slice(-800)
   };
   await mkdir(DATA, { recursive: true });
