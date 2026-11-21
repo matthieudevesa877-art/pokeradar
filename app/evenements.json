@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "at": "2026-11-17T21:37:44Z",
+      "id": "B0H8SZV8L7",
+      "product": "UPC Noctali · Soirée",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZV8L7?m=A1X6FK5RDHNB96",
+      "type": "invitation",
+      "from": "unavailable",
+      "to": "invitation",
+      "price": 229.99
+    },
+    {
+      "at": "2026-11-17T21:37:44Z",
+      "id": "B0H8T8M5WW",
+      "product": "Blister Évoli · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T8M5WW?m=A1X6FK5RDHNB96",
+      "type": "price",
+      "from": 12.99,
+      "to": 13.99
+    },
+    {
+      "at": "2026-11-17T21:37:44Z",
+      "id": "B0H8T6L1SF",
+      "product": "Mini-boîte Mentali · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T6L1SF?m=A1X6FK5RDHNB96",
+      "type": "price",
+      "from": 15.02,
+      "to": 14.99
+    },
+    {
+      "at": "2026-11-17T21:37:44Z",
+      "id": "B0H8T3Y1FJ",
+      "product": "Mini-boîte Amphinobi · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3Y1FJ?m=A1X6FK5RDHNB96",
+      "type": "price",
+      "from": 15.76,
+      "to": 14.99
+    },
+    {
+      "at": "2026-11-17T21:37:44Z",
+      "id": "pokemon-coffret-amphinobi-ex-30e-anniversaire-en-francais",
+      "product": "Coffret Amphinobi-ex",
+      "seller": "Le Coin des Barons",
+      "url": "https://lecoindesbarons.com/tradingcard-game/cartes-pokemon/coffrets-pokemon/pokemon-coffret-amphinobi-ex-30e-anniversaire-en-francais/",
+      "type": "soldout",
+      "from": "available",
+      "to": "unavailable"
+    },
+    {
+      "at": "2026-11-17T19:48:50Z",
+      "id": "ultrajeux-33582",
+      "product": "Deck Noctali",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33582-30e-anniversaire-deck-combat-noctali-ex-0196214147287.html",
+      "type": "restock",
+      "from": "unavailable",
+      "to": "available",
+      "price": 54.9
+    },
+    {
+      "at": "2026-11-17T19:48:50Z",
+      "id": "ultrajeux-33582",
+      "product": "Deck Noctali",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33582-30e-anniversaire-deck-combat-noctali-ex-0196214147287.html",
+      "type": "price",
+      "from": 49.9,
+      "to": 54.9
+    },
+    {
+      "at": "2026-11-15T11:21:37Z",
+      "id": "ultrajeux-33582",
+      "product": "Deck Noctali",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33582-30e-anniversaire-deck-combat-noctali-ex-0196214147287.html",
+      "type": "soldout",
+      "from": "available",
+      "to": "unavailable"
+    },
+    {
+      "at": "2026-11-12T20:26:43Z",
+      "id": "ultrajeux-33582",
+      "product": "Deck Noctali",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33582-30e-anniversaire-deck-combat-noctali-ex-0196214147287.html",
+      "type": "pickup",
+      "to": "Rennes-Raspail"
+    },
+    {
+      "at": "2026-11-11T23:35:42Z",
+      "id": "ultrajeux-33584",
+      "product": "Métamorph",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33584-coffret-8-boosters-pokemon-30e-anniversaire-collection-premium-metamorph-0196214147430.html",
+      "type": "pickup",
+      "to": "Rennes-Raspail"
+    },
+    {
+      "at": "2026-11-10T18:00:28Z",
+      "id": "ultrajeux-33582",
+      "product": "Deck Noctali",
+      "seller": "UltraJeux",
+      "url": "https://www.ultrajeux.com/produit-33582-30e-anniversaire-deck-combat-noctali-ex-0196214147287.html",
+      "type": "price",
+      "from": 39.9,
+      "to": 49.9
+    },
+    {
+      "at": "2026-11-09T09:33:39Z",
+      "id": "B0H8T3Y1FJ",
+      "product": "Mini-boîte Amphinobi · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3Y1FJ?m=A1X6FK5RDHNB96",
+      "type": "price",
+      "from": 15.62,
+      "to": 15.76
+    }
+  ]
+}
