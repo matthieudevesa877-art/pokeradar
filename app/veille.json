@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "offers": [
+    {
+      "id": "B0H8SZV8L7",
+      "product": "UPC Noctali · Soirée",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZV8L7?m=A1X6FK5RDHNB96",
+      "price": 229.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T3CLB1",
+      "product": "UPC Mentali · Journée",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3CLB1?m=A1X6FK5RDHNB96",
+      "price": 229.99,
+      "status": "unavailable",
+      "observedAt": "2026-11-22T08:51:20Z"
+    },
+    {
+      "id": "B0H8SVJL9F",
+      "product": "ETB · Coffret Dresseur d’élite",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SVJL9F?m=A1X6FK5RDHNB96",
+      "price": 55.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T1LY94",
+      "product": "Bundle · 6 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T1LY94?m=A1X6FK5RDHNB96",
+      "price": 35.94,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8STQ82Z",
+      "product": "Collection Premium Métamorph · 8 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8STQ82Z?m=A1X6FK5RDHNB96",
+      "price": 54.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T2SL51",
+      "product": "Collection figurine Mew",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T2SL51?m=A1X6FK5RDHNB96",
+      "price": 39.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T7N9NK",
+      "product": "Collection figurine Mewtwo",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T7N9NK?m=A1X6FK5RDHNB96",
+      "price": 39.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T2SB33",
+      "product": "Coffret Amphinobi-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T2SB33?m=A1X6FK5RDHNB96",
+      "price": 25.9,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8SZN9HV",
+      "product": "Coffret Nymphali-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZN9HV?m=A1X6FK5RDHNB96",
+      "price": 26.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8SYBZKN",
+      "product": "Pokébox Nymphali-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SYBZKN?m=A1X6FK5RDHNB96",
+      "price": 26.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T2L8BL",
+      "product": "Collection Poster",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T2L8BL?m=A1X6FK5RDHNB96",
+      "price": 25.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8SRZH3N",
+      "product": "Collection classeur",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SRZH3N?m=A1X6FK5RDHNB96",
+      "price": 49.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T8M5WW",
+      "product": "Blister Évoli · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T8M5WW?m=A1X6FK5RDHNB96",
+      "price": 13.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8SVLTJ9",
+      "product": "Tripack autocollant Lucario",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SVLTJ9?m=A1X6FK5RDHNB96",
+      "price": 20.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T4N6PP",
+      "product": "Tripack autocollant Noadkoko d’Alola",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T4N6PP?m=A1X6FK5RDHNB96",
+      "price": 20.99,
+      "status": "invitation",
+      "observedAt": "2026-11-09T09:50:48Z"
+    },
+    {
+      "id": "B0H8T6L1SF",
+      "product": "Mini-boîte Mentali · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T6L1SF?m=A1X6FK5RDHNB96",
+      "price": 14.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T3Y1FJ",
+      "product": "Mini-boîte Amphinobi · 2 boosters",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3Y1FJ?m=A1X6FK5RDHNB96",
+      "price": 14.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T38386",
+      "product": "Lot Journée · 5 mini-boîtes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T38386?m=A1X6FK5RDHNB96",
+      "price": 74.95,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8TF4B9N",
+      "product": "Lot Soirée · 5 mini-boîtes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8TF4B9N?m=A1X6FK5RDHNB96",
+      "price": 74.95,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8SZQMD6",
+      "product": "Deck Combat Mentali-ex · 60 cartes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8SZQMD6?m=A1X6FK5RDHNB96",
+      "price": 24.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T65P5Z",
+      "product": "Deck Combat Noctali-ex · 60 cartes",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T65P5Z?m=A1X6FK5RDHNB96",
+      "price": 24.99,
+      "status": "invitation",
+      "observedAt": "2026-11-17T22:32:32Z"
+    },
+    {
+      "id": "B0H8T3VGFN",
+      "product": "Pokébox Amphinobi-ex",
+      "seller": "Amazon.fr",
+      "url": "https://www.amazon.fr/dp/B0H8T3VGFN?m=A1X6FK5RDHNB96",
+      "price": null,
+      "status": "unknown",
+      "observedAt": "2026-11-07",
+      "details": "Autres vendeurs lors du dernier relevé."
+    }
+  ],
+  "campaigns": [],
+  "releases": []
+}
